@@ -23,7 +23,7 @@ This one handles large scripts without choking. Sections resize themselves, canv
 ## Getting Started
 
 ```lua
-local Library = loadstring(game:HttpGet("YOUR_LINK_HERE"))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/ErasedDiavolo/Naja/refs/heads/main/Naja"))()
 ```
 
 Yeah, standard loadstring. Nothing revolutionary here.
