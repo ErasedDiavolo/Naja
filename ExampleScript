@@ -1,0 +1,510 @@
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/ErasedDiavolo/Naja/refs/heads/main/Naja"))()
+
+local Window = Library:NaJa({
+    Title = "NaJa Element Tour",
+    Desc = "Complete UI Showcase v2.0",
+    Bind = Enum.KeyCode.RightShift,
+    Discord = "https://discord.gg/example"
+})
+
+local DocsTab = Window:Tab("Instructions", "book-open")
+
+local DocsProfile = DocsTab:ProfileCard({
+    Banner = "rbxassetid://91070444331154",
+    BannerHeight = 120,
+    Pfp = "rbxassetid://6317221408",
+    Name = "NaJa UI Documentation",
+    Description = "This tab is a simple guide to the NaJa UI Library. It shows the main elements, how they work, and the most common methods in one place.",
+    Buttons = {
+        {
+            Text = "GitHub",
+            Color = Color3.fromRGB(88, 101, 242),
+            HoverColor = Color3.fromRGB(110, 125, 255),
+            StrokeColor = Color3.fromRGB(100, 115, 255),
+            HoverStrokeColor = Color3.fromRGB(130, 145, 255),
+            TextColor = Color3.fromRGB(255, 255, 255),
+            Callback = function()
+                Window:Notify("GitHub", "github.com/ErasedDiavolo/NaJa", 3)
+            end
+        }
+    }
+})
+
+local QuickStartSection = DocsTab:Section("Quick Start", "Left")
+QuickStartSection:Paragraph("Start by loading the library with loadstring. Then create a window, add tabs, add sections, and place elements inside those sections. That is the basic flow.", Color3.fromRGB(140, 140, 140))
+QuickStartSection:Seperator("Basic Flow")
+QuickStartSection:Paragraph("1. Load the library\n2. Create the window\n3. Create a tab\n4. Create a section\n5. Add elements to the section", Color3.fromRGB(100, 200, 255))
+QuickStartSection:Seperator("Code Example")
+QuickStartSection:Paragraph("local Library = loadstring(game:HttpGet(...))()\nlocal Window = Library:NaJa({Title = 'My Hub'})\nlocal Tab = Window:Tab('Main', 'home')\nlocal Section = Tab:Section('Features', 'Left')\nSection:Toggle('Auto Farm', false, function(state) end)", Color3.fromRGB(100, 200, 255))
+
+local ElementGuideSection = DocsTab:Section("Element Guide", "Right")
+ElementGuideSection:Paragraph("These are the main element types you can use in NaJa UI. Each one is grouped by purpose so it is easier to find.", Color3.fromRGB(160, 160, 160))
+ElementGuideSection:Seperator("Text Elements")
+ElementGuideSection:Paragraph("Label() shows plain text.", Color3.fromRGB(160, 160, 160))
+ElementGuideSection:Paragraph("LabelColor() shows colored text.", Color3.fromRGB(160, 160, 160))
+ElementGuideSection:Paragraph("Paragraph() shows wrapped multi-line text.", Color3.fromRGB(160, 160, 160))
+ElementGuideSection:Paragraph("AnimatedParagraph() types text out over time.", Color3.fromRGB(160, 160, 160))
+ElementGuideSection:Paragraph("Seperator() creates a divider with a title.", Color3.fromRGB(160, 160, 160))
+ElementGuideSection:Seperator("Interactive Elements")
+ElementGuideSection:Paragraph("Button() runs a callback when pressed.", Color3.fromRGB(160, 160, 160))
+ElementGuideSection:Paragraph("Toggle() switches a setting on or off.", Color3.fromRGB(160, 160, 160))
+ElementGuideSection:Paragraph("Checkbox() is a check-style toggle.", Color3.fromRGB(160, 160, 160))
+ElementGuideSection:Paragraph("Keybind() lets the user bind a key.", Color3.fromRGB(160, 160, 160))
+ElementGuideSection:Seperator("Input Elements")
+ElementGuideSection:Paragraph("InputSmall() is for short single-line text.", Color3.fromRGB(160, 160, 160))
+ElementGuideSection:Paragraph("InputLarge() is for longer multi-line text.", Color3.fromRGB(160, 160, 160))
+ElementGuideSection:Paragraph("Textbox() is a classic labeled input field.", Color3.fromRGB(160, 160, 160))
+ElementGuideSection:Seperator("Selection Elements")
+ElementGuideSection:Paragraph("Dropdown() lets the user pick one item.", Color3.fromRGB(160, 160, 160))
+ElementGuideSection:Paragraph("MultiDropdown() lets the user pick many items.", Color3.fromRGB(160, 160, 160))
+ElementGuideSection:Paragraph("DropdownV2() uses a floating dropdown panel.", Color3.fromRGB(160, 160, 160))
+ElementGuideSection:Paragraph("MultiDropdownV2() is the floating multi-select version.", Color3.fromRGB(160, 160, 160))
+ElementGuideSection:Seperator("Value Elements")
+ElementGuideSection:Paragraph("Slider() lets the user choose a numeric value.", Color3.fromRGB(160, 160, 160))
+ElementGuideSection:Seperator("Media Elements")
+ElementGuideSection:Paragraph("Image() displays an image with optional zoom.", Color3.fromRGB(160, 160, 160))
+ElementGuideSection:Paragraph("Video() plays a video with controls.", Color3.fromRGB(160, 160, 160))
+ElementGuideSection:Seperator("Layout Elements")
+ElementGuideSection:Paragraph("ProfileCard() creates a banner card with buttons.", Color3.fromRGB(160, 160, 160))
+ElementGuideSection:Paragraph("Section() creates a content container.", Color3.fromRGB(160, 160, 160))
+ElementGuideSection:Paragraph("SetTabImage() adds a background image to a tab.", Color3.fromRGB(160, 160, 160))
+
+local APISection = DocsTab:Section("API Reference", "Left")
+APISection:Paragraph("This section shows the most common methods returned by elements. These methods let you update text, values, and visuals after creation.", Color3.fromRGB(160, 160, 160))
+APISection:Seperator("Universal Methods")
+APISection:Paragraph(":Set(text) updates text content.", Color3.fromRGB(160, 160, 160))
+APISection:Paragraph(":Update(state) updates toggle and checkbox state.", Color3.fromRGB(160, 160, 160))
+APISection:Paragraph(":SetText(text) changes the element label.", Color3.fromRGB(160, 160, 160))
+APISection:Seperator("Dropdown Methods")
+APISection:Paragraph(":Set(value, silent) selects an item.", Color3.fromRGB(160, 160, 160))
+APISection:Paragraph(":Get() returns the selected value or values.", Color3.fromRGB(160, 160, 160))
+APISection:Paragraph(":Add(item) adds a new option.", Color3.fromRGB(160, 160, 160))
+APISection:Paragraph(":Clear() removes all options.", Color3.fromRGB(160, 160, 160))
+APISection:Seperator("Slider Methods")
+APISection:Paragraph(":Set(value) changes the slider position.", Color3.fromRGB(160, 160, 160))
+APISection:Seperator("Image Methods")
+APISection:Paragraph(":SetImage(id) changes the image.", Color3.fromRGB(160, 160, 160))
+APISection:Paragraph(":SetHeight(px) changes the image height.", Color3.fromRGB(160, 160, 160))
+APISection:Paragraph(":OpenZoom() and :CloseZoom() control the zoom view.", Color3.fromRGB(160, 160, 160))
+APISection:Seperator("AnimatedParagraph Methods")
+APISection:Paragraph(":Set(text/table) changes the message or message list.", Color3.fromRGB(160, 160, 160))
+APISection:Paragraph(":SetLoop(boolean) turns looping on or off.", Color3.fromRGB(160, 160, 160))
+APISection:Seperator("ProfileCard Methods")
+APISection:Paragraph(":SetBanner(id) changes the banner image.", Color3.fromRGB(160, 160, 160))
+APISection:Paragraph(":SetPfp(id) changes the profile picture.", Color3.fromRGB(160, 160, 160))
+APISection:Paragraph(":SetName(text) changes the card title.", Color3.fromRGB(160, 160, 160))
+APISection:Paragraph(":SetDescription(text) changes the card description.", Color3.fromRGB(160, 160, 160))
+APISection:Paragraph(":UpdateButtonText(idx, text) changes a button label.", Color3.fromRGB(160, 160, 160))
+APISection:Paragraph(":SetButtonColor(idx, color) changes a button color.", Color3.fromRGB(160, 160, 160))
+
+local SettingsInfoSection = DocsTab:Section("Built-in Settings", "Right")
+SettingsInfoSection:Paragraph("NaJa UI includes a settings panel in the top bar. It helps control notifications, colors, size, and other global options.", Color3.fromRGB(160, 160, 160))
+SettingsInfoSection:Seperator("What Settings Can Do")
+SettingsInfoSection:Paragraph("Turn notifications on or off.", Color3.fromRGB(160, 160, 160))
+SettingsInfoSection:Paragraph("Turn sounds on or off.", Color3.fromRGB(160, 160, 160))
+SettingsInfoSection:Paragraph("Change the main text color.", Color3.fromRGB(160, 160, 160))
+SettingsInfoSection:Paragraph("Adjust the transparency of the UI.", Color3.fromRGB(160, 160, 160))
+SettingsInfoSection:Paragraph("Change the UI size.", Color3.fromRGB(160, 160, 160))
+SettingsInfoSection:Paragraph("Change the window keybind.", Color3.fromRGB(160, 160, 160))
+SettingsInfoSection:Paragraph("Search for elements quickly.", Color3.fromRGB(160, 160, 160))
+SettingsInfoSection:Paragraph("Destroy the UI cleanly when done.", Color3.fromRGB(160, 160, 160))
+SettingsInfoSection:Seperator("Global Features")
+SettingsInfoSection:Paragraph("The window is draggable.", Color3.fromRGB(160, 160, 160))
+SettingsInfoSection:Paragraph("The UI can be shown or hidden with a keybind.", Color3.fromRGB(160, 160, 160))
+SettingsInfoSection:Paragraph("The layout adapts to screen size.", Color3.fromRGB(160, 160, 160))
+SettingsInfoSection:Paragraph("The UI uses a smooth opening animation.", Color3.fromRGB(160, 160, 160))
+SettingsInfoSection:Paragraph("Image tabs can use a frosted glass look.", Color3.fromRGB(160, 160, 160))
+
+local MainTab = Window:Tab("Main", "layout-dashboard")
+
+local ProfileCard = MainTab:ProfileCard({
+    Banner = "rbxassetid://91070444331154",
+    BannerHeight = 140,
+    Pfp = "rbxassetid://6317221408",
+    Name = "NaJa UI Library",
+    Description = "A modern, feature-rich UI library for Roblox with smooth animations, glassmorphism effects, and extensive customization options. Version 2.0 with search dropdowns and merged features!",
+    Buttons = {
+        {
+            Text = "Documentation",
+            Color = Color3.fromRGB(88, 101, 242),
+            HoverColor = Color3.fromRGB(110, 125, 255),
+            StrokeColor = Color3.fromRGB(100, 115, 255),
+            HoverStrokeColor = Color3.fromRGB(130, 145, 255),
+            TextColor = Color3.fromRGB(255, 255, 255),
+            Callback = function()
+                Window:Notify("Profile Card", "Documentation button clicked!", 3)
+            end
+        },
+        {
+            Text = "GitHub",
+            Color = Color3.fromRGB(35, 35, 35),
+            HoverColor = Color3.fromRGB(50, 50, 50),
+            StrokeColor = Color3.fromRGB(55, 55, 55),
+            HoverStrokeColor = Color3.fromRGB(75, 75, 75),
+            TextColor = Color3.fromRGB(200, 200, 200),
+            Callback = function()
+                Window:Notify("Profile Card", "GitHub button clicked!", 3)
+            end
+        }
+    }
+})
+
+local InfoSection = MainTab:Section("Information", "Left")
+InfoSection:Label("Welcome to the NaJa UI Library Element Tour!")
+InfoSection:LabelColor("This is a colored label example.", Color3.fromRGB(255, 100, 100))
+InfoSection:Paragraph("This paragraph element supports wrapped text that spans multiple lines automatically. Perfect for descriptions, changelogs, or any long-form content you want to display inside a section. Resize the window to see it wrap!", Color3.fromRGB(120, 120, 120))
+InfoSection:Seperator("Separator Demo")
+InfoSection:Label("Separators divide content with style")
+
+local AnimatedSection = MainTab:Section("Animated Text", "Left")
+AnimatedSection:Paragraph("The AnimatedParagraph types itself out character by character when you open this tab. Perfect for intros, lore, or dramatic effect!", Color3.fromRGB(160, 160, 160))
+AnimatedSection:AnimatedParagraph("This text types itself out character by character when you open this tab. Perfect for intros, lore, or dramatic effect!", 0.04, Color3.fromRGB(160, 160, 160))
+
+local MultiMsgSection = MainTab:Section("Multi-Message", "Right")
+MultiMsgSection:Paragraph("Pass a TABLE to AnimatedParagraph for sequential messages:", Color3.fromRGB(140, 140, 140))
+MultiMsgSection:AnimatedParagraph({
+    "Message 1: This is the first message in the sequence.",
+    "Message 2: Then this one types out next!",
+    "Message 3: And finally, this third message appears.",
+    "Message 4: You can have as many messages as you want!"
+}, 0.04, Color3.fromRGB(100, 200, 255))
+
+local LoopSection = MainTab:Section("Looping Text", "Right")
+LoopSection:Paragraph("Set loop=true for infinite cycling:", Color3.fromRGB(140, 140, 140))
+local loopPara = LoopSection:AnimatedParagraph("This paragraph loops infinitely! It types out, erases, and starts over automatically. Perfect for status messages, live updates, or eye-catching announcements.", 0.035, Color3.fromRGB(255, 180, 80), true)
+
+local ImageSection = MainTab:Section("Image Element", "Right")
+ImageSection:Paragraph("Images support click callbacks and ZOOM lightbox (click the image!):", Color3.fromRGB(140, 140, 140))
+ImageSection:Image({
+    Name = "Showcase Image",
+    Image = "rbxassetid://6317221408",
+    Height = 160,
+    CornerRadius = 10,
+    Border = true,
+    BorderColor = Color3.fromRGB(40, 40, 40),
+    BorderThickness = 1,
+    ScaleType = Enum.ScaleType.Fit,
+    Callback = function()
+        Window:Notify("Image Clicked", "You clicked the showcase image! Try the zoom lightbox!", 3)
+    end
+})
+
+local ImageSection2 = MainTab:Section("Image 2", "Right")
+ImageSection2:Image({
+    Name = "Thumbnail Image",
+    Image = "rbxthumb://type=Asset&id=134775184849755&w=150&h=150",
+    Height = 160,
+    CornerRadius = 10,
+    Border = true,
+    BorderColor = Color3.fromRGB(40, 40, 40),
+    BorderThickness = 1,
+    ScaleType = Enum.ScaleType.Fit,
+    Callback = function()
+        Window:Notify("Image 2 Clicked", "Thumbnail image callback triggered!", 3)
+    end
+})
+
+local VideoSection = MainTab:Section("Video Element", "Left")
+VideoSection:Paragraph("Video elements support playback controls, looping, and volume:", Color3.fromRGB(140, 140, 140))
+VideoSection:Video({
+    Name = "Showcase Video",
+    Video = "rbxassetid://5608290551",
+    Height = 160,
+    CornerRadius = 10,
+    Border = true,
+    BorderColor = Color3.fromRGB(40, 40, 40),
+    BorderThickness = 1,
+    Looped = true,
+    Playing = true,
+    Volume = 0.5,
+    Callback = function()
+        Window:Notify("Video Clicked", "You clicked the showcase video!", 3)
+    end
+})
+
+local InteractiveTab = Window:Tab("Interactive", "mouse-pointer-click")
+
+local ButtonSection = InteractiveTab:Section("Buttons", "Left")
+ButtonSection:Paragraph("Buttons come in two flavors: action buttons and toggle buttons.", Color3.fromRGB(140, 140, 140))
+local toggleBtn = ButtonSection:Button("Toggle Button", false, function(state)
+    Window:Notify("Toggle Button", "State: " .. tostring(state), 3)
+end)
+ButtonSection:Button("Action Button", function()
+    Window:Notify("Button Clicked", "Standard action button triggered!", 3)
+end)
+ButtonSection:Button("Another Action", function()
+    Window:Notify("Button", "You can have unlimited buttons!", 3)
+end)
+
+local ToggleSection = InteractiveTab:Section("Toggles", "Right")
+ToggleSection:Paragraph("Toggles use a smooth sliding animation with accent colors.", Color3.fromRGB(140, 140, 140))
+local myToggle = ToggleSection:Toggle("Enable Feature", false, function(state)
+    Window:Notify("Toggle Changed", "Feature enabled: " .. tostring(state), 3)
+end)
+ToggleSection:Toggle("Auto Farm", true, function(state)
+    Window:Notify("Auto Farm", "Auto Farm: " .. tostring(state), 3)
+end)
+ToggleSection:Toggle("Anti-AFK", false, function(state)
+    Window:Notify("Anti-AFK", "Anti-AFK: " .. tostring(state), 3)
+end)
+
+local CheckboxSection = InteractiveTab:Section("Checkboxes", "Right")
+CheckboxSection:Paragraph("Checkboxes show a checkmark animation when enabled. Different visual from toggles!", Color3.fromRGB(140, 140, 140))
+local myCheckbox = CheckboxSection:Checkbox("ESP Enabled", false, function(state)
+    Window:Notify("Checkbox", "ESP: " .. tostring(state), 3)
+end)
+CheckboxSection:Checkbox("Anti-AFK", true, function(state)
+    Window:Notify("Checkbox", "Anti-AFK: " .. tostring(state), 3)
+end)
+CheckboxSection:Checkbox("Show Names", false, function(state)
+    Window:Notify("Checkbox", "Show Names: " .. tostring(state), 3)
+end)
+
+local KeybindSection = InteractiveTab:Section("Keybinds", "Left")
+KeybindSection:Paragraph("Keybinds capture keyboard input and trigger callbacks. Click to set a new key.", Color3.fromRGB(140, 140, 140))
+local flyKey = KeybindSection:Keybind("Fly Key", Enum.KeyCode.F, function(key)
+    Window:Notify("Keybind Triggered", "Fly activated with " .. key.Name, 3)
+end)
+local noclipKey = KeybindSection:Keybind("Noclip", Enum.KeyCode.N, function(key)
+    Window:Notify("Keybind Triggered", "Noclip toggled with " .. key.Name, 3)
+end)
+local clickKey = KeybindSection:Keybind("Click TP", Enum.KeyCode.G, function(key)
+    Window:Notify("Keybind Triggered", "Click teleport activated!", 3)
+end)
+
+local InputTab = Window:Tab("Inputs", "text-cursor-input")
+
+local SmallInputSection = InputTab:Section("Small Inputs", "Left")
+SmallInputSection:Paragraph("Single-line text inputs with placeholder text. Press Enter to submit.", Color3.fromRGB(140, 140, 140))
+SmallInputSection:InputSmall("Username", "Enter username...", function(text)
+    Window:Notify("Input Received", "Username: " .. text, 3)
+end)
+SmallInputSection:InputSmall("Search Query", "Type to search...", function(text)
+    Window:Notify("Search", "Searching for: " .. text, 3)
+end)
+SmallInputSection:InputSmall("Player ID", "Enter user ID...", function(text)
+    Window:Notify("Input", "Player ID: " .. text, 3)
+end)
+
+local LargeInputSection = InputTab:Section("Large Inputs", "Right")
+LargeInputSection:Paragraph("Multi-line text areas for longer content. Also submits on Enter.", Color3.fromRGB(140, 140, 140))
+LargeInputSection:InputLarge("Description", "Enter a detailed description here...", function(text)
+    Window:Notify("Large Input", "Received " .. #text .. " characters", 3)
+end)
+LargeInputSection:InputLarge("Notes", "Write your notes here...", function(text)
+    Window:Notify("Notes", "Saved " .. #text .. " characters", 3)
+end)
+
+local TextboxSection = InputTab:Section("Classic Textbox", "Left")
+TextboxSection:Paragraph("Classic labeled textbox with title above input field.", Color3.fromRGB(140, 140, 140))
+TextboxSection:Textbox("Player ID", "Enter user ID...", function(text)
+    Window:Notify("Textbox", "ID entered: " .. text, 3)
+end)
+TextboxSection:Textbox("Webhook URL", "https://discord.com/api/webhooks/...", function(text)
+    Window:Notify("Textbox", "Webhook set!", 3)
+end)
+
+local DropdownTab = Window:Tab("Dropdowns", "chevrons-up-down")
+
+local V1SingleSection = DropdownTab:Section("V1 Single Select", "Left")
+V1SingleSection:Paragraph("Classic dropdown that expands within the section. Good for simple selections.", Color3.fromRGB(140, 140, 140))
+local weaponDropdown = V1SingleSection:Dropdown("Select Weapon", {"Sword", "Axe", "Bow", "Staff", "Dagger", "Spear", "Mace"}, "Sword", function(selected)
+    Window:Notify("Weapon Selected", "You chose: " .. selected, 3)
+end)
+
+local V1MultiSection = DropdownTab:Section("V1 Multi Select", "Right")
+V1MultiSection:Paragraph("Multi-select dropdown with checkmarks. Select multiple items at once.", Color3.fromRGB(140, 140, 140))
+local fruitDropdown = V1MultiSection:MultiDropdown("Select Fruits", {"Apple", "Banana", "Orange", "Mango", "Grape", "Pineapple", "Watermelon", "Peach"}, {"Apple", "Orange"}, function(selectedList, changedItem)
+    local listStr = table.concat(selectedList, ", ")
+    Window:Notify("Fruits Updated", "Selected: " .. listStr, 3)
+end)
+
+local V2SingleSection = DropdownTab:Section("V2 Single Select (Floating)", "Left")
+V2SingleSection:Paragraph("V2 dropdowns use a floating panel that follows the button. Better for long lists!", Color3.fromRGB(140, 140, 140))
+local weaponDropdownV2 = V2SingleSection:DropdownV2("Select Weapon V2", {"Sword", "Axe", "Bow", "Staff", "Dagger", "Spear", "Mace", "Wand", "Shield"}, "Sword", function(selected)
+    Window:Notify("Weapon V2", "You chose: " .. selected, 3)
+end)
+
+local V2MultiSection = DropdownTab:Section("V2 Multi Select (Floating)", "Right")
+V2MultiSection:Paragraph("Floating multi-select with improved visuals and positioning.", Color3.fromRGB(140, 140, 140))
+local fruitDropdownV2 = V2MultiSection:MultiDropdownV2("Select Fruits V2", {"Apple", "Banana", "Orange", "Mango", "Grape", "Pineapple", "Watermelon", "Peach", "Plum"}, {"Apple", "Orange"}, function(selectedList, changedItem)
+    local listStr = table.concat(selectedList, ", ")
+    Window:Notify("Fruits V2", "Selected: " .. listStr, 3)
+end)
+
+local SearchSingleSection = DropdownTab:Section("Search Single (NEW)", "Left")
+SearchSingleSection:Paragraph("Turn search on by adding true as the last parameter. Then type to filter the list.", Color3.fromRGB(255, 200, 100))
+local searchDropdown = SearchSingleSection:Dropdown("Search Weapons", {"Iron Sword", "Steel Axe", "Golden Bow", "Diamond Staff", "Obsidian Dagger", "Dragon Spear", "Void Mace", "Legendary Blade", "Mythic Wand"}, "Iron Sword", function(selected)
+    Window:Notify("Search Dropdown", "Selected: " .. selected, 3)
+end, true)
+
+local SearchMultiSection = DropdownTab:Section("Search Multi (NEW)", "Right")
+SearchMultiSection:Paragraph("This version supports search and multiple selection together.", Color3.fromRGB(255, 200, 100))
+local searchMultiDropdown = SearchMultiSection:MultiDropdown("Search Skills", {"Fireball", "Ice Shard", "Lightning Bolt", "Healing Wave", "Shadow Strike", "Holy Smite", "Poison Cloud", "Meteor Shower", "Time Warp", "Black Hole"}, {"Fireball"}, function(selectedList, changedItem)
+    local listStr = table.concat(selectedList, ", ")
+    Window:Notify("Search Multi", "Selected: " .. listStr, 3)
+end, true)
+
+local SearchV2Section = DropdownTab:Section("Search V2 Single (NEW)", "Left")
+SearchV2Section:Paragraph("A floating dropdown with search built in.", Color3.fromRGB(255, 200, 100))
+local searchV2Dropdown = SearchV2Section:DropdownV2("Search Items", {"Health Potion", "Mana Potion", "Stamina Elixir", "Speed Boost", "Invisibility Cloak", "Teleport Scroll", "Revive Token", "XP Booster", "Luck Charm", "Shield Barrier"}, "Health Potion", function(selected)
+    Window:Notify("Search V2", "Selected: " .. selected, 3)
+end, true)
+
+local SearchV2MultiSection = DropdownTab:Section("Search V2 Multi (NEW)", "Right")
+SearchV2MultiSection:Paragraph("This version combines floating dropdown, search, and multi-select.", Color3.fromRGB(255, 200, 100))
+local searchV2MultiDropdown = SearchV2MultiSection:MultiDropdownV2("Search Buffs", {"Strength Buff", "Agility Buff", "Intelligence Buff", "Defense Buff", "Regeneration", "Haste", "Fortitude", "Wisdom", "Charisma", "Perception"}, {"Strength Buff", "Haste"}, function(selectedList, changedItem)
+    local listStr = table.concat(selectedList, ", ")
+    Window:Notify("Search V2 Multi", "Selected: " .. listStr, 3)
+end, true)
+
+local SliderTab = Window:Tab("Sliders", "sliders-horizontal")
+
+local SliderSection = SliderTab:Section("Integer Sliders", "Left")
+SliderSection:Paragraph("Integer sliders round to whole numbers. Good for counts, levels, and other fixed values.", Color3.fromRGB(140, 140, 140))
+local speedSlider = SliderSection:Slider("Walk Speed", false, 16, 500, 16, function(value)
+    Window:Notify("Walk Speed", "Set to: " .. value, 2)
+end)
+local jumpSlider = SliderSection:Slider("Jump Power", false, 50, 300, 50, function(value)
+    Window:Notify("Jump Power", "Set to: " .. value, 2)
+end)
+local levelSlider = SliderSection:Slider("Target Level", false, 1, 1000, 1, function(value)
+    Window:Notify("Target Level", "Set to: " .. value, 2)
+end)
+
+local FloatSliderSection = SliderTab:Section("Float Sliders", "Right")
+FloatSliderSection:Paragraph("Float sliders keep decimal values. Good for FOV, volume, and percentages.", Color3.fromRGB(140, 140, 140))
+local fovSlider = FloatSliderSection:Slider("Field of View", true, 30, 120, 70, function(value)
+    Window:Notify("FOV", "Set to: " .. value, 2)
+end)
+local volumeSlider = FloatSliderSection:Slider("Volume", true, 0, 1, 0.5, function(value)
+    Window:Notify("Volume", "Set to: " .. math.floor(value * 100) .. "%", 2)
+end)
+local scaleSlider = FloatSliderSection:Slider("UI Scale", true, 0.5, 2, 1, function(value)
+    Window:Notify("UI Scale", "Set to: " .. value, 2)
+end)
+
+local BgImageTab = Window:Tab("Tab Background", "wallpaper")
+
+BgImageTab:SetTabImage("rbxassetid://6317221408", 0.15, Color3.fromRGB(200, 200, 255))
+
+local BgSection1 = BgImageTab:Section("Glassmorphism", "Left")
+BgSection1:Paragraph("This tab shows the background image feature. When SetTabImage is used, the section panels get a frosted glass look over the image.", Color3.fromRGB(180, 180, 220))
+BgSection1:Label("Elements still work normally over the background")
+BgSection1:Toggle("Overlay Effect", false, function(state)
+    Window:Notify("Background Tab", "Overlay: " .. tostring(state), 3)
+end)
+BgSection1:Button("Test Button", function()
+    Window:Notify("Background Tab", "Button works over the image!", 3)
+end)
+
+local BgSection2 = BgImageTab:Section("Usage", "Right")
+BgSection2:Paragraph("Use tab:SetTabImage(imageId, transparency, color) on the tab object to set a background image. The image fades in when the tab opens and fades out when you switch away.", Color3.fromRGB(180, 180, 220))
+BgSection2:Paragraph("imageId can be rbxassetid:// or a direct URL.", Color3.fromRGB(160, 160, 160))
+BgSection2:Paragraph("transparency should be between 0 and 1.", Color3.fromRGB(160, 160, 160))
+BgSection2:Paragraph("color is optional and acts as a tint.", Color3.fromRGB(160, 160, 160))
+BgSection2:Seperator("Tips")
+BgSection2:Paragraph("Use darker images for the best look.", Color3.fromRGB(160, 160, 160))
+BgSection2:Paragraph("A transparency around 0.1 to 0.2 usually looks good.", Color3.fromRGB(160, 160, 160))
+
+local ExperimentTab = Window:Tab("Experiment", "flask-conical")
+
+local ExperimentProfile = ExperimentTab:ProfileCard({
+    Banner = "rbxassetid://91070444331154",
+    BannerHeight = 100,
+    Pfp = "rbxassetid://6317221408",
+    Name = "Experiment Zone",
+    Description = "This tab is for testing and experimenting with NaJa UI features. Try different combinations and see what works!",
+    Buttons = {
+        {
+            Text = "Reset All",
+            Color = Color3.fromRGB(200, 60, 60),
+            HoverColor = Color3.fromRGB(220, 80, 80),
+            StrokeColor = Color3.fromRGB(180, 50, 50),
+            HoverStrokeColor = Color3.fromRGB(200, 70, 70),
+            TextColor = Color3.fromRGB(255, 255, 255),
+            Callback = function()
+                Window:Notify("Experiment", "Reset functionality would go here!", 3)
+            end
+        },
+        {
+            Text = "Randomize",
+            Color = Color3.fromRGB(60, 180, 60),
+            HoverColor = Color3.fromRGB(80, 200, 80),
+            StrokeColor = Color3.fromRGB(50, 160, 50),
+            HoverStrokeColor = Color3.fromRGB(70, 180, 70),
+            TextColor = Color3.fromRGB(255, 255, 255),
+            Callback = function()
+                Window:Notify("Experiment", "Randomize functionality would go here!", 3)
+            end
+        }
+    }
+})
+
+local DynamicSection = ExperimentTab:Section("Dynamic Elements", "Left")
+DynamicSection:Paragraph("These elements demonstrate dynamic updates and API usage:", Color3.fromRGB(140, 140, 140))
+
+local dynamicToggle = DynamicSection:Toggle("Dynamic Toggle", false, function(state)
+    Window:Notify("Dynamic", "Toggle state: " .. tostring(state), 2)
+end)
+
+local dynamicCheckbox = DynamicSection:Checkbox("Dynamic Checkbox", false, function(state)
+    Window:Notify("Dynamic", "Checkbox state: " .. tostring(state), 2)
+end)
+
+DynamicSection:Button("Update Toggle ON", function()
+    dynamicToggle:Update(true)
+    Window:Notify("API Test", "Toggle updated via :Update(true)!", 2)
+end)
+
+DynamicSection:Button("Update Toggle OFF", function()
+    dynamicToggle:Update(false)
+    Window:Notify("API Test", "Toggle updated via :Update(false)!", 2)
+end)
+
+DynamicSection:Button("Update Checkbox ON", function()
+    dynamicCheckbox:Update(true)
+    Window:Notify("API Test", "Checkbox updated via :Update(true)!", 2)
+end)
+
+DynamicSection:Button("Update Checkbox OFF", function()
+    dynamicCheckbox:Update(false)
+    Window:Notify("API Test", "Checkbox updated via :Update(false)!", 2)
+end)
+
+local APITestSection = ExperimentTab:Section("API Tests", "Right")
+APITestSection:Paragraph("Test various API methods here:", Color3.fromRGB(140, 140, 140))
+
+local apiLabel = APITestSection:Label("This label will change")
+local apiColorLabel = APITestSection:LabelColor("This will also change", Color3.fromRGB(255, 100, 100))
+local apiParagraph = APITestSection:Paragraph("This paragraph text can be updated dynamically using the :Set() method on the returned object.", Color3.fromRGB(120, 120, 120))
+
+APITestSection:Button("Change Label Text", function()
+    apiLabel:Set("Updated at " .. os.date("%X"))
+    Window:Notify("API", "Label text updated!", 2)
+end)
+
+APITestSection:Button("Change Paragraph", function()
+    apiParagraph:Set("Paragraph updated at " .. os.date("%X") .. ". The :Set() method works on Paragraphs, Labels, and AnimatedParagraphs!")
+    Window:Notify("API", "Paragraph updated!", 2)
+end)
+
+APITestSection:Button("Send Test Notification", function()
+    Window:Notify("Test Notification", "This is a test notification with sound!", 4, 9122054151)
+end)
+
+APITestSection:Button("Send Long Notification", function()
+    Window:Notify("Long Message", "This is a much longer notification message to demonstrate text wrapping and multi-line support in the notification system!", 6)
+end)
+
+task.delay(2, function()
+    Window:Notify("Element Tour v2.0 Loaded!", "All NaJa UI elements are now visible! New: Merged Dropdowns tab, Search-enabled dropdowns, Instructions tab, Experiment tab, and more!", 6, 9122054151)
+end)
+
+task.delay(4, function()
+    Window:Notify("Pro Tip", "Try the search dropdowns in the Dropdowns tab! Type to filter options in real-time.", 5)
+end)
+
+task.delay(6, function()
+    Window:Notify("Documentation", "Check the Instructions tab for a complete API reference and usage guide!", 5)
+end)
