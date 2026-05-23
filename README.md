@@ -2,7 +2,7 @@
 
 It's a UI library for Roblox. Not much more to it than that, but it actually works without making your game lag to death.
 
-I built this because I got tired of libraries that look pretty in screenshots but fall apart the second you try to do anything dynamic. You know the ones — "responsive layouts" that break when you add more than 3 buttons, dropdowns that clip through the map, that whole deal.
+I built this because I got tired of libraries that look pretty in screenshots but fall apart the second you try to do anything dynamic. You know the ones "responsive layouts" that break when you add more than 3 buttons, dropdowns that clip through the map, that whole deal.
 
 This one handles large scripts without choking. Sections resize themselves, canvas expands automatically, paragraphs wrap properly. You shouldn't have to babysit your UI framework.
 
@@ -60,22 +60,22 @@ local RightSection = MainTab:Section("Extra Features", "Right")
 
 ## Elements
 
-**Label** — plain text. Boring but necessary.
+**Label** plain text. Boring but necessary.
 ```lua
 LeftSection:Label("Hello World")
 ```
 
-**Colored Label** — same thing but you pick the color.
+**Colored Label** same thing but you pick the color.
 ```lua
 LeftSection:LabelColor("Colored Text", Color3.fromRGB(255,100,100))
 ```
 
-**Paragraph** — wraps text so it doesn't overflow everywhere.
+**Paragraph** wraps text so it doesn't overflow everywhere.
 ```lua
 LeftSection:Paragraph("This is a wrapped paragraph.", Color3.fromRGB(150,150,150))
 ```
 
-**Animated Paragraph** — types out like someone's actually typing it.
+**Animated Paragraph** types out like someone's actually typing it.
 ```lua
 LeftSection:AnimatedParagraph("Animated typing text.", 0.04)
 ```
@@ -98,7 +98,7 @@ end)
 
 `false` is the default state.
 
-**Checkbox** — basically a toggle but looks like a checkbox. Some people prefer them visually.
+**Checkbox** basically a toggle but looks like a checkbox. Some people prefer them visually.
 ```lua
 LeftSection:Checkbox("ESP", false, function(state)
     print(state)
@@ -121,21 +121,21 @@ end)
 
 Arguments are: name, showValue (bool), min, max, default, callback. `false` hides the number if you don't want it cluttering the UI.
 
-**Textbox** — single line.
+**Textbox** single line.
 ```lua
 LeftSection:Textbox("Username", "Enter Username", function(text)
     print(text)
 end)
 ```
 
-**InputSmall** — slightly different styling, same idea.
+**InputSmall** slightly different styling, same idea.
 ```lua
 LeftSection:InputSmall("Username", "Type Here", function(text)
     print(text)
 end)
 ```
 
-**InputLarge** — multi-line. Good for descriptions or when you need someone to paste a webhook URL or whatever.
+**InputLarge** multi-line. Good for descriptions or when you need someone to paste a webhook URL or whatever.
 ```lua
 LeftSection:InputLarge("Description", "Write Something", function(text)
     print(text)
@@ -153,21 +153,21 @@ LeftSection:Dropdown("Weapon", {"Sword", "Gun", "Bow"}, "Sword", function(select
 end)
 ```
 
-**Multi-dropdown** — returns a table of selected stuff.
+**Multi-dropdown** returns a table of selected stuff.
 ```lua
 LeftSection:MultiDropdown("Fruits", {"Apple", "Banana", "Orange"}, {"Apple"}, function(selected)
     print(selected)
 end)
 ```
 
-**Searchable dropdown** — add `true` at the end to enable filtering. Honestly this should probably just be default but here we are.
+**Searchable dropdown** add `true` at the end to enable filtering. Honestly this should probably just be default but here we are.
 ```lua
 LeftSection:Dropdown("Search", {"Item 1", "Item 2", "Item 3"}, "Item 1", function(selected)
     print(selected)
 end, true)
 ```
 
-**Floating Dropdown V2** — detached panel that floats instead of pushing content down. Use this if your dropdown has 50 options and you don't want it to resize your entire section.
+**Floating Dropdown V2** detached panel that floats instead of pushing content down. Use this if your dropdown has 50 options and you don't want it to resize your entire section.
 ```lua
 LeftSection:DropdownV2("Weapon", {"Sword", "Gun", "Bow"}, "Sword", function(selected)
     print(selected)
@@ -187,7 +187,7 @@ LeftSection:Image({
 })
 ```
 
-**Video** — yes, it plays videos. No, don't autoplay loud ones. Please.
+**Video** yes, it plays videos. No, don't autoplay loud ones. Please.
 ```lua
 LeftSection:Video({
     Name = "Preview Video",
@@ -245,7 +245,7 @@ I won't list every single one because you can figure it out from the pattern. If
 
 ## Why This Instead of [Other Library]?
 
-Honestly? Use whatever works for your project. But if you're building something with a lot of moving parts — dynamic sections, live updating content, dropdowns that need to not suck — this handles it without you writing a bunch of manual layout code.
+Honestly? Use whatever works for your project. But if you're building something with a lot of moving parts — dynamic sections, live updating content, dropdowns that need to not suck this handles it without you writing a bunch of manual layout code.
 
 The layout system actually responds to content changes. Sections don't break when you add 12 toggles. Dropdowns filter in real-time without lagging. It's built for scripts that do things, not just static menus.
 
