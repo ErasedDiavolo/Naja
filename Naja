@@ -15,7 +15,7 @@ function library:NaJa(config)
 	local UIConfig = {
 		Title   = config.Title   or "NaJa Hub",
 		Desc    = config.Desc    or "Made by NaJa",
-		Bind    = config.Bind    or Enum.KeyCode.K,
+		Bind    = Enum.KeyCode.K,
 		Discord = config.Discord or "",
 	}
 
