@@ -29,7 +29,6 @@ function library:NaJa(config)
 	local LocalPlayer = Players.LocalPlayer
 	local Mouse       = LocalPlayer:GetMouse()
 
-	-- ── Palette ─────────────────────────────────────────────────────────────
 	local BG        = Color3.fromRGB(6,   6,   6)
 	local Surface   = Color3.fromRGB(10,  10,  10)
 	local Card      = Color3.fromRGB(14,  14,  14)
@@ -39,7 +38,6 @@ function library:NaJa(config)
 	local TxtMut    = Color3.fromRGB(80,  80,  80)
 	local Accent    = Color3.fromRGB(255, 255, 255)
 
-	-- ── Settings State ───────────────────────────────────────────────────────
     local Settings = {
     	notifEnabled = true,
     	soundEnabled = true,
@@ -47,11 +45,9 @@ function library:NaJa(config)
     	keybindListening = false,
     }
 
-	-- ── Registry ─────────────────────────────────────────────────────────────
 	local FeatureRegistry = {}
 	local shimmerConnections = {}
 
-	-- ── Easing presets ──────────────────────────────────────────────────────
 	local function Tween(obj, props, dur, style, dir)
 		if not obj or not obj.Parent then return end
 		local t = TweenService:Create(
@@ -100,7 +96,6 @@ function library:NaJa(config)
 		}), rot or 0)
 	end
 
-	-- ── Shimmer animations ──────────────────────────────────────────────────
 	local function startShimmerAnimation(gradObj, speed, minBright, maxBright)
 		speed     = speed     or 1.2
 		minBright = minBright or 0.10
@@ -128,7 +123,6 @@ function library:NaJa(config)
 		return conn
 	end
 
-	-- ── Dragify ──────────────────────────────────────────────────────────────
 	local function dragify(handle, frame)
 		local dragging, dragInput, mousePos, framePos
 		handle.InputBegan:Connect(function(input)
@@ -157,7 +151,6 @@ function library:NaJa(config)
 		end)
 	end
 
-	-- ── ScreenGui ─────────────────────────────────────────────────────────────
 	pcall(function()
 		if game:GetService("CoreGui"):FindFirstChild("NaJaUI") then
 			game:GetService("CoreGui"):FindFirstChild("NaJaUI"):Destroy()
@@ -175,9 +168,6 @@ function library:NaJa(config)
 	pcall(function() UI.Parent = game:GetService("CoreGui") end)
 	if not UI.Parent then UI.Parent = LocalPlayer.PlayerGui end
 
-	-- ═══════════════════════════════════════════════════════════════════════
-	-- INTRO ANIMATION OVERLAY
-	-- ═══════════════════════════════════════════════════════════════════════
 	local IntroOverlay = Instance.new("Frame")
 	IntroOverlay.Name                 = "IntroOverlay"
 	IntroOverlay.Parent               = UI
@@ -187,7 +177,6 @@ function library:NaJa(config)
 	IntroOverlay.Size                 = UDim2.new(1, 0, 1, 0)
 	IntroOverlay.ZIndex               = 99999
 
-	-- Intro logo container
 	local IntroLogoFrame = Instance.new("Frame")
 	IntroLogoFrame.Parent               = IntroOverlay
 	IntroLogoFrame.BackgroundTransparency = 1
@@ -222,7 +211,6 @@ function library:NaJa(config)
 	IntroSub.TextTransparency     = 1
 	IntroSub.ZIndex               = 100001
 
-	-- Intro line sweep
 	local IntroLine = Instance.new("Frame")
 	IntroLine.Parent               = IntroLogoFrame
 	IntroLine.BackgroundColor3     = Color3.fromRGB(255, 255, 255)
@@ -235,7 +223,6 @@ function library:NaJa(config)
 	IntroLineGrad.Parent           = IntroLine
 	startShimmerAnimation(IntroLineGrad, 2.0, 0.2, 1.0)
 
-	-- ── Main Frame ───────────────────────────────────────────────────────────
 	local Main = Instance.new("Frame")
 	Main.Name                   = "Main"
 	Main.Parent                 = UI
@@ -255,7 +242,6 @@ function library:NaJa(config)
 	local MainCorner = Instance.new("UICorner"); MainCorner.CornerRadius = UDim.new(0,16); MainCorner.Parent = Main
 	local MainStroke = Instance.new("UIStroke"); MainStroke.Color = Color3.fromRGB(38,38,38); MainStroke.Thickness = 1; MainStroke.Parent = Main
 
-	-- ── UI Size ──────────────────────────────────────────────────────────────
 	_G.UISize = "Auto"
 	local targetSize = UDim2.new(0, 640, 0, 450)
 	local function applyUISize(size)
@@ -277,27 +263,19 @@ function library:NaJa(config)
 		if _G.UISize == "Auto" then applyUISize("Auto") end
 	end)
 
-	-- ═══════════════════════════════════════════════════════════════════════
-	-- RUN INTRO ANIMATION
-	-- ═══════════════════════════════════════════════════════════════════════
 	task.spawn(function()
-		-- Phase 1: line sweeps in
 		task.wait(0.3)
 		TweenService:Create(IntroLine, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(1, 0, 0, 1)}):Play()
 		task.wait(0.35)
-		-- Phase 2: title fades in with slight rise
 		IntroTitle.Position = UDim2.new(0.5, 0, 0.55, 0)
 		TweenService:Create(IntroTitle, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {TextTransparency = 0, Position = UDim2.new(0.5, 0, 0.4, 0)}):Play()
 		task.wait(0.25)
-		-- Phase 3: sub fades in
 		TweenService:Create(IntroSub, TweenInfo.new(0.45, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {TextTransparency = 0}):Play()
 		task.wait(0.9)
-		-- Phase 4: everything fades out, main reveals
 		TweenService:Create(IntroTitle, TweenInfo.new(0.35, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {TextTransparency = 1}):Play()
 		TweenService:Create(IntroSub, TweenInfo.new(0.35, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {TextTransparency = 1}):Play()
 		TweenService:Create(IntroLine, TweenInfo.new(0.35, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {Size = UDim2.new(0, 0, 0, 1)}):Play()
 		task.wait(0.2)
-		-- Reveal main
 		Main.Size = UDim2.new(0, 0, 0, 0)
 		Main.BackgroundTransparency = 0
 		applyUISize("Auto")
@@ -550,7 +528,6 @@ local function showNotification(title, message, duration, soundId)
 	end)
 end
 
-	-- ── TopBar ───────────────────────────────────────────────────────────────
 	local TopBar = Instance.new("Frame")
 	TopBar.Name                   = "TopBar"; TopBar.Parent = Main
 	TopBar.BackgroundColor3       = Color3.fromRGB(10,10,10); TopBar.BackgroundTransparency = 0
@@ -575,7 +552,6 @@ end
 	Desc.Font=Enum.Font.Gotham; Desc.Text=UIConfig.Desc
 	Desc.TextColor3=Color3.fromRGB(48,48,48); Desc.TextSize=10; Desc.TextXAlignment=Enum.TextXAlignment.Left; Desc.ZIndex=3
 
-	-- ── Header Button Factory ─────────────────────────────────────────────────
 	local function makeHeaderBtn(parent, xOffset, w, iconId, label, zBase)
 		zBase = zBase or 2
 		local Btn = Instance.new("TextButton")
@@ -606,7 +582,6 @@ end
 		return Btn, Icon, Lbl, BtnStroke
 	end
 
-	-- ── Discord Button (redesigned) ───────────────────────────────────────────
 	local DiscordBtn = Instance.new("TextButton")
 	DiscordBtn.Parent               = TopBar
 	DiscordBtn.BackgroundColor3     = Color3.fromRGB(14, 14, 14)
@@ -685,7 +660,6 @@ end
 		if UIConfig.Discord ~= "" then
 			if setclipboard then setclipboard(UIConfig.Discord) end
 			if toclipboard  then toclipboard(UIConfig.Discord) end
-			-- Confirm flash
 			Tween(DiscordFill, {BackgroundTransparency = 0.4}, 0.1)
 			task.delay(0.15, function() Tween(DiscordFill, {BackgroundTransparency = 0.82}, 0.3) end)
 			showNotification("Discord", "Invite link copied to clipboard!", 4)
@@ -694,10 +668,8 @@ end
 		end
 	end)
 
-	-- ── Settings Button ───────────────────────────────────────────────────────
 	local SettingsBtn, _SBIcon, _SBLbl, _SBStroke = makeHeaderBtn(TopBar, -238, 100, "rbxassetid://4483345998", "Settings", 2)
 
-	-- ── Size Dropdown ─────────────────────────────────────────────────────────
 	local SizeDropdown, _SizeIcon, SizeText = makeHeaderBtn(TopBar, -130, 100, "rbxassetid://7072718266", "Auto", 200)
 
 	local SizePanel = Instance.new("Frame")
@@ -792,7 +764,6 @@ end
 		end
 	end)
 
-	-- ── Sidebar ──────────────────────────────────────────────────────────────
 	local Sidebar=Instance.new("Frame")
 	Sidebar.Name="Sidebar"; Sidebar.Parent=Main
 	Sidebar.BackgroundColor3=Surface; Sidebar.BackgroundTransparency=0
@@ -814,7 +785,6 @@ end
 	local TabPadding=Instance.new("UIPadding"); TabPadding.Parent=TabContainer
 	TabPadding.PaddingLeft=UDim.new(0,8); TabPadding.PaddingRight=UDim.new(0,8); TabPadding.PaddingTop=UDim.new(0,6)
 
-	-- ── Player Footer ─────────────────────────────────────────────────────────
 	local PlayerSection=Instance.new("Frame")
 	PlayerSection.Name="PlayerSection"; PlayerSection.Parent=Sidebar
 	PlayerSection.BackgroundTransparency=1; PlayerSection.BorderSizePixel=0
@@ -860,7 +830,6 @@ end
 	PfpBtn.MouseEnter:Connect(function() Tween(PfpRing,{BackgroundColor3=Color3.fromRGB(65,65,65)},0.16) end)
 	PfpBtn.MouseLeave:Connect(function() Tween(PfpRing,{BackgroundColor3=Color3.fromRGB(32,32,32)},0.16) end)
 
-	-- ── Content Area ──────────────────────────────────────────────────────────
 	local Bottom=Instance.new("Frame")
 	Bottom.Name="Bottom"; Bottom.Parent=Main; Bottom.BackgroundTransparency=1
 	Bottom.Position=UDim2.new(0,152,0,48); Bottom.Size=UDim2.new(1,-152,1,-48)
@@ -868,9 +837,6 @@ end
 	local ClickFrame=Instance.new("Frame")
 	ClickFrame.Name="Top"; ClickFrame.Parent=Main; ClickFrame.BackgroundTransparency=1; ClickFrame.Size=UDim2.new(1,0,0,48)
 
-	-- ═══════════════════════════════════════════════════════════════════════
-	-- COLOR PICKER UTILITY
-	-- ═══════════════════════════════════════════════════════════════════════
 	local function createColorPicker(title, default, callback)
 		local picker = {}
 		local currentColor = default or Color3.fromRGB(230, 230, 230)
@@ -892,7 +858,6 @@ end
 		local CPCorner = Instance.new("UICorner"); CPCorner.CornerRadius = UDim.new(0, 12); CPCorner.Parent = CPFrame
 		local CPStroke = Instance.new("UIStroke"); CPStroke.Color = Color3.fromRGB(40, 40, 40); CPStroke.Thickness = 1; CPStroke.Parent = CPFrame
 
-		-- Header
 		local CPHeader = Instance.new("Frame")
 		CPHeader.Parent = CPFrame; CPHeader.BackgroundTransparency = 1
 		CPHeader.Size = UDim2.new(1, 0, 0, 38)
@@ -916,14 +881,13 @@ end
 		CPDivider.BackgroundColor3 = Color3.fromRGB(28, 28, 28); CPDivider.BorderSizePixel = 0
 		CPDivider.Position = UDim2.new(0, 0, 0, 38); CPDivider.Size = UDim2.new(1, 0, 0, 1)
 
-		-- Hue/Saturation canvas
 	local CPCanvas = Instance.new("ImageButton")
 	CPCanvas.Parent = CPFrame
 	CPCanvas.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 	CPCanvas.BorderSizePixel = 0
 	CPCanvas.Position = UDim2.new(0, 12, 0, 50)
 	CPCanvas.Size = UDim2.new(1, -24, 0, 140)
-	CPCanvas.Image = "rbxassetid://698052001" -- saturation/brightness gradient
+	CPCanvas.Image = "rbxassetid://698052001"
 	CPCanvas.ZIndex = 20001
 	CPCanvas.Active = true
 	CPCanvas.AutoButtonColor = false
@@ -936,7 +900,6 @@ end
 		local CPCursorC = Instance.new("UICorner"); CPCursorC.CornerRadius = UDim.new(1, 0); CPCursorC.Parent = CPCursor
 		local CPCursorS = Instance.new("UIStroke"); CPCursorS.Color = Color3.fromRGB(0, 0, 0); CPCursorS.Thickness = 1.5; CPCursorS.Parent = CPCursor
 
-		-- Hue bar
 	local CPHueBar = Instance.new("ImageButton")
 	CPHueBar.Parent = CPFrame; CPHueBar.BorderSizePixel = 0
 	CPHueBar.Position = UDim2.new(0, 12, 0, 200); CPHueBar.Size = UDim2.new(1, -24, 0, 16)
@@ -952,7 +915,6 @@ end
 		local CPHueCursorC = Instance.new("UICorner"); CPHueCursorC.CornerRadius = UDim.new(0, 4); CPHueCursorC.Parent = CPHueCursor
 		local CPHueCursorS = Instance.new("UIStroke"); CPHueCursorS.Color = Color3.fromRGB(0, 0, 0); CPHueCursorS.Thickness = 1.5; CPHueCursorS.Parent = CPHueCursor
 
-		-- Preview + hex
 		local CPPreviewRow = Instance.new("Frame")
 		CPPreviewRow.Parent = CPFrame; CPPreviewRow.BackgroundTransparency = 1
 		CPPreviewRow.Position = UDim2.new(0, 12, 0, 226); CPPreviewRow.Size = UDim2.new(1, -24, 0, 34)
@@ -979,7 +941,6 @@ end
 		CPHexInput.Position = UDim2.new(0, 22, 0, 0); CPHexInput.Size = UDim2.new(1, -26, 1, 0)
 		CPHexInput.Font = Enum.Font.GothamBold; CPHexInput.Text = "E6E6E6"; CPHexInput.TextColor3 = TxtPri; CPHexInput.TextSize = 11
 
-		-- Apply button
 		local CPApply = Instance.new("TextButton")
 		CPApply.Parent = CPFrame; CPApply.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 		CPApply.BorderSizePixel = 0; CPApply.Position = UDim2.new(0, 12, 0, 270); CPApply.Size = UDim2.new(1, -24, 0, 28)
@@ -1086,9 +1047,6 @@ end
 		return picker
 	end
 
-	-- ═══════════════════════════════════════════════════════════════════════
-	-- SETTINGS UI
-	-- ═══════════════════════════════════════════════════════════════════════
 	local SettingsUI=Instance.new("Frame")
 	SettingsUI.Name="SettingsUI"; SettingsUI.Parent=Main
 	SettingsUI.BackgroundColor3=BG; SettingsUI.BackgroundTransparency=0
@@ -1137,7 +1095,6 @@ end
 	SettingsTitleLbl.Size=UDim2.new(0,200,0,18); SettingsTitleLbl.Font=Enum.Font.GothamBold
 	SettingsTitleLbl.Text="Settings"; SettingsTitleLbl.TextColor3=TxtPri; SettingsTitleLbl.TextSize=13; SettingsTitleLbl.ZIndex=502
 
-	-- Search bar
 	local SearchBarFrame=Instance.new("Frame"); SearchBarFrame.Parent=SettingsUI; SearchBarFrame.BackgroundColor3=Color3.fromRGB(13,13,13)
 	SearchBarFrame.BorderSizePixel=0; SearchBarFrame.Position=UDim2.new(0,20,0,57); SearchBarFrame.Size=UDim2.new(1,-40,0,28); SearchBarFrame.ZIndex=510
 	local SBCorner=Instance.new("UICorner"); SBCorner.CornerRadius=UDim.new(0,8); SBCorner.Parent=SearchBarFrame
@@ -1162,7 +1119,6 @@ end
 	SettingsPad.PaddingLeft=UDim.new(0,20); SettingsPad.PaddingRight=UDim.new(0,20)
 	SettingsPad.PaddingTop=UDim.new(0,16); SettingsPad.PaddingBottom=UDim.new(0,24)
 
-	-- Search results panel
 	local SearchResultFrame=Instance.new("Frame"); SearchResultFrame.Parent=SettingsUI; SearchResultFrame.BackgroundColor3=Color3.fromRGB(11,11,11)
 	SearchResultFrame.BorderSizePixel=0; SearchResultFrame.Position=UDim2.new(0,20,0,88)
 	SearchResultFrame.Size=UDim2.new(1,-40,0,0); SearchResultFrame.ZIndex=600; SearchResultFrame.ClipsDescendants=true
@@ -1172,7 +1128,6 @@ end
 	local SRPad=Instance.new("UIPadding"); SRPad.Parent=SearchResultFrame
 	SRPad.PaddingLeft=UDim.new(0,6); SRPad.PaddingRight=UDim.new(0,6); SRPad.PaddingTop=UDim.new(0,5); SRPad.PaddingBottom=UDim.new(0,5)
 
-    	-- Custom Banner Image (separate scope to avoid local limit)
 	do
 		local b = Instance.new("Frame", SettingsScroll)
 		b.Name = "BannerCard"
@@ -1199,7 +1154,6 @@ end
 		Instance.new("UICorner", i).CornerRadius = UDim.new(0, 10)
 	end
 
-	-- Welcome card
 	local WelcomeCard=Instance.new("Frame"); WelcomeCard.Parent=SettingsScroll; WelcomeCard.BackgroundColor3=Color3.fromRGB(13,13,13)
 	WelcomeCard.BorderSizePixel=0; WelcomeCard.Size=UDim2.new(1,0,0,82); WelcomeCard.ZIndex=501
 	local WCCorner=Instance.new("UICorner"); WCCorner.CornerRadius=UDim.new(0,10); WCCorner.Parent=WelcomeCard
@@ -1262,7 +1216,6 @@ end
 		return row, lbl, rs
 	end
 
-	-- Compact toggle for settings (smaller switch)
 	local function makeCompactToggle(parent, default, zBase)
 		zBase=zBase or 504
 		local SwBg=Instance.new("Frame"); SwBg.Parent=parent; SwBg.BackgroundColor3=Color3.fromRGB(20,20,20); SwBg.BorderSizePixel=0
@@ -1282,7 +1235,6 @@ end
 		return SwBg, SwFill, SwKnob, SwBgS, SwKS
 	end
 
-	-- Notifications card
 	local notifCard, notifInner = makeSettingsCard("Notifications")
 	local nRow, nLbl = makeSettingsRow(notifInner, "Show Notifications")
 	local nSwBg, nSwFill, nKnob, nSwBgS = makeCompactToggle(nRow, Settings.notifEnabled)
@@ -1306,7 +1258,6 @@ end
 		Tween(sSwBgS,{Color=s and Color3.fromRGB(160,160,160) or Color3.fromRGB(34,34,34)},0.25)
 	end)
 
-	-- Appearance card
 	local appearCard, appearInner = makeSettingsCard("Appearance")
 
 	local txtColorRow, txtColorLbl = makeSettingsRow(appearInner, "Text Color")
@@ -1321,7 +1272,6 @@ end
 	local txtColorPicker = createColorPicker("Text Color", Settings.textColor, function(c)
 		Settings.textColor = c
 		Tween(txtColorPreview, {BackgroundColor3 = c}, 0.2)
-		-- Update all feature labels that use TxtPri
 		TxtPri = c
 	end)
 
@@ -1332,8 +1282,6 @@ end
 	end)
 	txtColorHit.MouseEnter:Connect(function() Tween(txtColorPreviewS, {Color = Color3.fromRGB(100, 100, 100)}, 0.14) end)
 	txtColorHit.MouseLeave:Connect(function() Tween(txtColorPreviewS, {Color = Color3.fromRGB(50, 50, 50)}, 0.14) end)
-    	-- UI Transparency slider
-	-- UI Transparency slider
 	do
 		local uiTransRow = makeSettingsRow(appearInner, "UI Transparency")
 
@@ -1399,7 +1347,6 @@ end
 		end)
 	end
 
-	-- UI Size card
 	local sizeCard, sizeInner = makeSettingsCard("UI Size")
 	for _, opt in ipairs({"Auto","Large","Big","Normal"}) do
 		local row, lbl, rs = makeSettingsRow(sizeInner, opt)
@@ -1421,10 +1368,6 @@ end
 		end)
 	end
 
-	-- Danger zone card
-	-- ═══════════════════════════════════════════════════════════════════════
-	-- CONFIRMATION DIALOG (Danger Zone)
-	-- ═══════════════════════════════════════════════════════════════════════
 	local ConfirmOverlay = Instance.new("TextButton")
 	ConfirmOverlay.Name = "ConfirmOverlay"
 	ConfirmOverlay.Parent = UI
@@ -1537,7 +1480,6 @@ end
 		task.wait(0.45); UI:Destroy()
 	end)
 
-    -- Keybind card (wrapped in do-end to avoid local register limit)
 local keybindCard
 do
 	local kb = {}
@@ -1647,7 +1589,6 @@ do
 	end)
 end
 
-	-- Danger zone card
 	local destCard, destInner = makeSettingsCard("Danger Zone")
 	local destRow, destLbl = makeSettingsRow(destInner, "Destroy UI")
 	destLbl.TextColor3=Color3.fromRGB(210,55,55); destLbl.Font=Enum.Font.GothamBold
@@ -1852,12 +1793,11 @@ SettingsScroll:GetPropertyChangedSignal("CanvasPosition"):Connect(function()
 	end
 end)
 
-	-- ── Settings transitions ──────────────────────────────────────────────────
 	local inSettings = false
 
 	local function goToSettings()
 		if inSettings then return end; inSettings=true
-		Tween(SettingsUI,{Position=UDim2.new(1,0,0,0)},0) -- reset pos instantly before show
+		Tween(SettingsUI,{Position=UDim2.new(1,0,0,0)},0)
 		SettingsUI.Visible=true
 		task.defer(function()
 			Tween(SettingsUI,{Position=UDim2.new(0,0,0,0)},0.38,Enum.EasingStyle.Quart,Enum.EasingDirection.Out)
@@ -1879,7 +1819,6 @@ end)
 	BackBtn.MouseButton1Click:Connect(goBack)
 	SettingsBtn.MouseButton1Click:Connect(goToSettings)
 
-	-- ── Toggle keybind ────────────────────────────────────────────────────────
 	local uitoggled = false
 	UserInputService.InputBegan:Connect(function(io, p)
 		if p then return end
@@ -1898,9 +1837,6 @@ end)
 
 	dragify(ClickFrame, Main)
 
-	-- ═══════════════════════════════════════════════════════════════════════
-	-- UI TRANSPARENCY ENGINE (whole-UI fade) — wrapped to limit locals
-	-- ═══════════════════════════════════════════════════════════════════════
 	do
 		local origins = {}
 		local captured = false
@@ -1956,9 +1892,6 @@ end)
 		applyGlobalTransparency(0)
 	end)
 
-	-- ════════════════════════════════════════════════════════════════════════
-	-- TAB SYSTEM
-	-- ════════════════════════════════════════════════════════════════════════
 	local tabs = {}
 	local firstTab = true
 	local activeTabBtn = nil
@@ -2011,23 +1944,21 @@ end)
 
 		local TabStroke=Instance.new("UIStroke"); TabStroke.Color=Color3.fromRGB(36,36,36); TabStroke.Thickness=1; TabStroke.Transparency=1; TabStroke.Parent=TabBtn
 
-		-- Page with slide-in animation
 		local Page=Instance.new("ScrollingFrame"); Page.Name=Name.."Page"; Page.Parent=Bottom
 		Page.BackgroundTransparency=1; Page.Position=UDim2.new(0,0,0,0); Page.Size=UDim2.new(1,0,1,0)
 		Page.ScrollBarThickness=0; Page.ScrollBarImageColor3=Color3.fromRGB(32,32,32); Page.CanvasSize=UDim2.new(0,0,0,0); Page.Visible=false
 
-		-- Tab background image (fills entire content area / Bottom frame)
 		local TabBgImage = Instance.new("ImageLabel")
 		TabBgImage.Name = Name.."BgImage"
 		TabBgImage.Parent = Bottom
 		TabBgImage.BackgroundTransparency = 1
-		TabBgImage.Position = UDim2.new(0, 0, 0, 0)      -- full feature holder
+		TabBgImage.Position = UDim2.new(0, 0, 0, 0)
 		TabBgImage.Size = UDim2.new(1, 0, 1, 0)
 		TabBgImage.Image = ""
 		TabBgImage.ImageColor3 = Color3.fromRGB(255, 255, 255)
-		TabBgImage.ImageTransparency = 1                  -- hidden by default
+		TabBgImage.ImageTransparency = 1
 		TabBgImage.ScaleType = Enum.ScaleType.Crop
-		TabBgImage.ZIndex = 0                           -- behind everything in Bottom
+		TabBgImage.ZIndex = 0
 		TabBgImage.Visible = false
 		TabBgImage.ClipsDescendants = true
 
@@ -2035,7 +1966,6 @@ end)
 		TabBgCorner.CornerRadius = UDim.new(0, 16)
 		TabBgCorner.Parent = TabBgImage
 
-		-- Registry to track sections for this tab (used for glassmorphism)
 		local tabSections = {}
 		local tabHasImage = false
 
@@ -2047,7 +1977,6 @@ end)
 		local PagePadding=Instance.new("UIPadding"); PagePadding.Parent=Page
 		PagePadding.PaddingLeft=UDim.new(0,12); PagePadding.PaddingRight=UDim.new(0,12); PagePadding.PaddingTop=UDim.new(0,12); PagePadding.PaddingBottom=UDim.new(0,12)
 
-		-- Container for the two columns (horizontal layout)
 		local ColumnsContainer=Instance.new("Frame"); ColumnsContainer.Name="ColumnsContainer"; ColumnsContainer.Parent=Page
 		ColumnsContainer.BackgroundTransparency=1; ColumnsContainer.Size=UDim2.new(1,0,1,0); ColumnsContainer.LayoutOrder=1
 
@@ -2064,7 +1993,6 @@ end)
 		local function updateCanvas()
 			Left.CanvasSize=UDim2.new(0,0,0,LeftList.AbsoluteContentSize.Y+10)
 			Right.CanvasSize=UDim2.new(0,0,0,RightList.AbsoluteContentSize.Y+10)
-			-- Update columns container height based on tallest column
 			local maxColH = math.max(LeftList.AbsoluteContentSize.Y, RightList.AbsoluteContentSize.Y) + 20
 			ColumnsContainer.Size = UDim2.new(1, 0, 0, maxColH)
 			Page.CanvasSize=UDim2.new(0,0,0,PageLayout.AbsoluteContentSize.Y+20)
@@ -2075,7 +2003,6 @@ end)
 		TabList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanvas)
 		task.defer(updateCanvas)
 
-		-- Animate content items in when tab is activated
 		local function animatePageItems(page)
 			local allItems = {}
 			for _, col in ipairs({page:FindFirstChild("Left"), page:FindFirstChild("Right")}) do
@@ -2087,12 +2014,10 @@ end)
 					end
 				end
 			end
-			-- Stagger fade/slide in
 			for i, item in ipairs(allItems) do
 				local origT = item.BackgroundTransparency
 				item.BackgroundTransparency = 1
 				item.Position = UDim2.new(0, 0, 0, 0)
-				-- slight offset
 				local origPos = item.Position
 				task.delay((i-1) * 0.045, function()
 					if not item or not item.Parent then return end
@@ -2107,19 +2032,17 @@ end)
 			Tween(TabBtn,{BackgroundTransparency=0},0.22); Tween(TabStroke,{Transparency=0},0.22)
 			TabGrad.Enabled=true; Page.Visible=true; activatePills()
 			activeTabBtn = TabBtn; activeTabPage = Page
-			-- Fade in tab background image
 			if TabBgImage.Image ~= "" then
 				TabBgImage.Visible = true
 				Tween(TabBgImage, {ImageTransparency = 0}, 0.35, Enum.EasingStyle.Quart)
 			end
-			-- Animate content in
 			task.defer(function() animatePageItems(Page) end)
 		end
 
 		if firstTab then firstTab=false; activateTab() end
 
 		TabBtn.MouseButton1Click:Connect(function()
-			if Page.Visible then return end -- already active
+			if Page.Visible then return end
 			for _, x in pairs(TabContainer:GetChildren()) do
 				if x:IsA("TextButton") then
 					local pill=x:FindFirstChild("Indicator"); local pillR=x:FindFirstChild("IndicatorRight")
@@ -2136,7 +2059,6 @@ end)
 				if y:IsA("ScrollingFrame") then 
 					y.Visible = false 
 				elseif y:IsA("ImageLabel") and y.Name:match("BgImage$") then
-					-- Fade out and hide old tab background images
 					if y.Visible then
 						Tween(y, {ImageTransparency = 1}, 0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
 						task.delay(0.22, function()
@@ -2161,9 +2083,6 @@ end)
 
 		local sections={}
 
-		-- ═══════════════════════════════════════════════════════════════════════
-		-- FULL-WIDTH PROFILE CARD (Page-level, spans both columns)
-		-- ═══════════════════════════════════════════════════════════════════════
 		function sections:ProfileCard(config)
 			config = config or {}
 			local cardFunc = {}
@@ -2176,23 +2095,20 @@ end)
 			if config.Button then
 				table.insert(buttons, config.Button)
 			end
-			-- Max 2 buttons
 			if #buttons > 2 then
 				buttons = {buttons[1], buttons[2]}
 			end
 
-			-- Calculate base height
 			local bannerH = hasBanner and (config.BannerHeight or 120) or 0
-			local contentPad = 16 -- padding around content area
+			local contentPad = 16
 
-			-- Main card frame - PARENTED TO PAGE directly, not inside a section
 			local CardFrame = Instance.new("Frame")
 			CardFrame.Name = "ProfileCard"
-			CardFrame.Parent = Page  -- <<< PARENTED TO PAGE, not SectionContainer
+			CardFrame.Parent = Page
 			CardFrame.BackgroundColor3 = Color3.fromRGB(13, 13, 13)
 			CardFrame.BorderSizePixel = 0
-			CardFrame.Size = UDim2.new(1, 0, 0, bannerH + 70) -- initial, will auto-size
-			CardFrame.LayoutOrder = -999 -- <<< always first
+			CardFrame.Size = UDim2.new(1, 0, 0, bannerH + 70)
+			CardFrame.LayoutOrder = -999
 			CardFrame.ClipsDescendants = true
 			CardFrame.ZIndex = 2
 
@@ -2205,7 +2121,6 @@ end)
 			CardStroke.Thickness = 1
 			CardStroke.Parent = CardFrame
 
-			-- Shimmer line at top
 			local CardShimmer = Instance.new("Frame")
 			CardShimmer.Name = "CardShimmer"
 			CardShimmer.Parent = CardFrame
@@ -2219,7 +2134,6 @@ end)
 			CardShimmerGrad.Parent = CardShimmer
 			startShimmerAnimation(CardShimmerGrad, 0.8, 0.04, 0.35)
 
-			-- Banner image
 			local BannerImage
 			if hasBanner then
 				BannerImage = Instance.new("ImageLabel")
@@ -2233,7 +2147,6 @@ end)
 				BannerImage.ZIndex = 2
 			end
 
-			-- Content area
 			local ContentFrame = Instance.new("Frame")
 			ContentFrame.Name = "Content"
 			ContentFrame.Parent = CardFrame
@@ -2242,7 +2155,6 @@ end)
 			ContentFrame.Size = UDim2.new(1, 0, 1, -bannerH)
 			ContentFrame.ZIndex = 3
 
-			-- Pfp (positioned with padding from left)
 			local PfpImage
 			local pfpSize = hasPfp and 48 or 0
 			local pfpPad = hasPfp and 16 or 0
@@ -2256,7 +2168,6 @@ end)
 				PfpContainer.Size = UDim2.new(0, pfpSize, 0, pfpSize)
 				PfpContainer.ZIndex = 4
 
-				-- Pfp ring/border
 				local PfpRing = Instance.new("Frame")
 				PfpRing.Parent = PfpContainer
 				PfpRing.BackgroundColor3 = Color3.fromRGB(32, 32, 32)
@@ -2273,7 +2184,6 @@ end)
 				RingStroke.Thickness = 1.5
 				RingStroke.Parent = PfpRing
 
-				-- Gradient ring effect
 				grad(PfpRing, ColorSequence.new({
 					ColorSequenceKeypoint.new(0, Color3.fromRGB(55, 55, 55)),
 					ColorSequenceKeypoint.new(0.5, Color3.fromRGB(28, 28, 28)),
@@ -2295,12 +2205,11 @@ end)
 				PfpCorner.Parent = PfpImage
 			end
 
-			-- Buttons area (right side) - calculate width needed
 			local buttonWidth = 0
 			local buttonHeight = 32
 			local buttonGap = 8
 			if #buttons > 0 then
-				buttonWidth = 86 -- fixed width per button
+				buttonWidth = 86
 			end
 			local totalButtonsWidth = #buttons * buttonWidth + math.max(0, #buttons - 1) * buttonGap
 
@@ -2347,7 +2256,6 @@ end)
 					BtnStroke.Thickness = 1
 					BtnStroke.Parent = Btn
 
-					-- Hover effects
 					Btn.MouseEnter:Connect(function()
 						Tween(Btn, {BackgroundColor3 = btnConfig.HoverColor or Color3.fromRGB(45, 200, 95)}, 0.14)
 						Tween(BtnStroke, {Color = btnConfig.HoverStrokeColor or Color3.fromRGB(65, 220, 115)}, 0.14)
@@ -2367,7 +2275,6 @@ end)
 				end
 			end
 
-			-- Text area (name + description) - positioned to avoid buttons
 			local textStartX = hasPfp and (16 + pfpSize + 12) or 16
 			local textEndPadding = #buttons > 0 and -(totalButtonsWidth + 24) or -16
 
@@ -2410,9 +2317,8 @@ end)
 				DescLabel.ZIndex = 4
 			end
 
-			-- Auto-size card height based on content
 			local function updateCardHeight()
-				local minContentH = 70 -- minimum content area height
+				local minContentH = 70
 				
 				if hasDesc and DescLabel then
 					local textBounds = game:GetService("TextService"):GetTextSize(
@@ -2438,7 +2344,6 @@ end)
 				CardFrame.Size = UDim2.new(1, 0, 0, totalH)
 			end
 
-			-- Delay initial size calculation
 			task.defer(function()
 				task.wait(0.15)
 				updateCardHeight()
@@ -2448,20 +2353,17 @@ end)
 				DescLabel:GetPropertyChangedSignal("AbsoluteSize"):Connect(updateCardHeight)
 			end
 
-			-- Registry for search
 			table.insert(FeatureRegistry, {
 				name = config.Name or "Profile Card",
 				tabName = Name,
-				sectionName = nil, -- no section, it's page-level
+				sectionName = nil,
 				instance = CardFrame,
 				tabBtn = TabBtn,
 				selectTab = function()
-					-- Activate this tab
 					TabBtn.MouseButton1Click:Fire()
 				end
 			})
 
-			-- API
 			function cardFunc:SetBanner(newImage)
 				if BannerImage then
 					BannerImage.Image = newImage
@@ -2532,7 +2434,6 @@ end)
 				blurOverlay.ZIndex = Section.ZIndex
 				blurOverlay.ImageTransparency = 0.35
 
-				-- Hide shimmer line for image tabs
 				local shimmer = Section:FindFirstChild("SecShimmer")
 				if shimmer then
 					shimmer.Visible = false
@@ -2639,14 +2540,12 @@ end)
     ImageLabel.ScaleType = config.ScaleType or Enum.ScaleType.Fit
     ImageLabel.ZIndex = 2
 
-    -- Optional corner radius
     if config.CornerRadius then
         local ImgCorner = Instance.new("UICorner")
         ImgCorner.CornerRadius = UDim.new(0, config.CornerRadius)
         ImgCorner.Parent = ImageLabel
     end
 
-    -- Optional border stroke
     if config.Border then
         local ImgStroke = Instance.new("UIStroke")
         ImgStroke.Color = config.BorderColor or Color3.fromRGB(28, 28, 28)
@@ -2654,7 +2553,6 @@ end)
         ImgStroke.Parent = ImageLabel
     end
 
-    -- Click callback (optional)
     if config.Callback then
         local ImgHit = Instance.new("TextButton")
         ImgHit.Parent = ImageFrame
@@ -2685,9 +2583,6 @@ end)
         ImageFrame.Size = UDim2.new(1, 0, 0, newHeight)
     end
 
-    -- ═══════════════════════════════════════════════════════════════════════
-    -- ZOOM LIGHTBOX (expands from image position to screen center)
-    -- ═══════════════════════════════════════════════════════════════════════
     local ZoomOverlay = Instance.new("Frame")
     ZoomOverlay.Name = "ZoomOverlay"
     ZoomOverlay.Parent = UI
@@ -2740,7 +2635,6 @@ end)
         ZoomImage.Image = ImageLabel.Image
         ZoomImage.ScaleType = ImageLabel.ScaleType
 
-        -- Position relative to the massive overlay
         ZoomImage.Position = UDim2.new(0, absPos.X + 5000, 0, absPos.Y + 5000)
         ZoomImage.Size = UDim2.new(0, absSize.X, 0, absSize.Y)
 
@@ -2752,7 +2646,6 @@ end)
         local targetW = math.min(vp.X * 0.9, 900)
         local targetH = math.min(vp.Y * 0.9, 700)
 
-        -- FOV zoom effect (lens zoom, not camera movement)
         local cam = getCamera()
         if cam then
             origFOV = cam.FieldOfView
@@ -2761,7 +2654,6 @@ end)
 
         Tween(ZoomOverlay, {BackgroundTransparency = 0.45}, 0.3)
 
-        -- Target position relative to overlay center
         local centerX = 5000 + (vp.X / 2) - (targetW / 2)
         local centerY = 5000 + (vp.Y / 2) - (targetH / 2)
 
@@ -2787,7 +2679,6 @@ end)
 
         Tween(ZoomOverlay, {BackgroundTransparency = 1}, 0.3)
 
-        -- Restore FOV
         local cam = getCamera()
         if cam and origFOV then
             TweenService:Create(cam, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {FieldOfView = origFOV}):Play()
@@ -2806,7 +2697,6 @@ end)
 
     ClickBlocker.MouseButton1Click:Connect(closeZoom)
 
-    -- Click target
     local ZoomHit = Instance.new("TextButton")
     ZoomHit.Parent = ImageFrame
     ZoomHit.BackgroundTransparency = 1
@@ -2818,7 +2708,6 @@ end)
         openZoom()
     end)
 
-    -- Subtle hover tint
     ImageFrame.MouseEnter:Connect(function()
         Tween(ZoomHit, {BackgroundTransparency = 0.92}, 0.15)
     end)
@@ -2968,7 +2857,6 @@ end
 				local ColumnsContainer = Column and Column.Parent
 				local Page = ColumnsContainer and ColumnsContainer.Parent
 
-				-- Support single string or table of messages
 				local messages = {}
 				if type(text) == "table" then
 					for _, msg in ipairs(text) do
@@ -2996,7 +2884,6 @@ end
 							local currentMsg = messages[msgIndex]
 							if not currentMsg then break end
 
-							-- TYPE
 							TextLabel.Text = ""
 							for i = 1, #currentMsg do
 								if not active or not Label.Parent then break end
@@ -3006,15 +2893,12 @@ end
 
 							if not active or not Label.Parent then break end
 
-							-- Pause at full text
 							task.wait(speed * 5)
 
 							if not active or not Label.Parent then break end
 
-							-- Check if this is the last message and loop is false
 							local isLastMessage = (msgIndex == #messages)
 
-							-- ERASE (only if not the last message when loop=false)
 							if not (isLastMessage and not loop) then
 								for i = #currentMsg, 1, -1 do
 									if not active or not Label.Parent then break end
@@ -3025,7 +2909,6 @@ end
 
 							if not active or not Label.Parent then break end
 
-							-- Move to next message
 							msgIndex = msgIndex + 1
 							if msgIndex > #messages then
 								if loop then
@@ -3035,7 +2918,6 @@ end
 								end
 							end
 
-							-- Pause before next message
 							task.wait(speed * 3)
 						end
 
@@ -3059,12 +2941,10 @@ end
 
 						local currentlyVisible = Page.Visible
 						if currentlyVisible and not lastVisible then
-							-- Tab became visible
 							stopAnimation()
 							msgIndex = 1
 							task.delay(0.12, runAnimation)
 						elseif not currentlyVisible and lastVisible then
-							-- Tab hidden
 							stopAnimation()
 						end
 						lastVisible = currentlyVisible
@@ -3444,7 +3324,6 @@ end
 				end
 				updateBtnText(); BtnText:GetPropertyChangedSignal("AbsoluteSize"):Connect(updateBtnText)
 
-				-- Hover: slide bar highlight, no ripple
 				BtnHit.MouseEnter:Connect(function()
 					Tween(ButtonFrame,{BackgroundColor3=Color3.fromRGB(26,26,26)},0.14)
 					Tween(BtnStroke,{Color=Color3.fromRGB(52,52,52)},0.14)
@@ -3457,7 +3336,6 @@ end
 					Tween(BtnText,{TextColor3=TxtPri},0.14)
 					Tween(BtnBar,{Size=UDim2.new(0,2,0.7,0)},0.18)
 				end)
-				-- Click: brief flash, no ripple
 				BtnHit.MouseButton1Down:Connect(function()
 					Tween(ButtonFrame,{BackgroundColor3=Color3.fromRGB(32,32,32)},0.08)
 				end)
@@ -3500,7 +3378,6 @@ end
 				SepText.TextColor3=Color3.fromRGB(68,68,68); SepText.TextSize=9; SepText.TextXAlignment=Enum.TextXAlignment.Center
 			end
 
-			-- ── Improved Toggle (compact switch) ───────────────────────────────
 			function functionitem:Toggle(TogName, default, callback)
 				local ToglFunc={}; local Tgo=default or false; callback=callback or function() end
 
@@ -3522,7 +3399,6 @@ end
 				ToggleText.Font=Enum.Font.Gotham; ToggleText.Text=tostring(TogName); ToggleText.TextColor3=Tgo and TxtPri or TxtMut
 				ToggleText.TextXAlignment=Enum.TextXAlignment.Left; ToggleText.TextYAlignment=Enum.TextYAlignment.Center; ToggleText.TextWrapped=false; ToggleText.ClipsDescendants=true; ToggleText.ZIndex=2
 
-				-- Compact switch: 36x18
 				local SwHousing=Instance.new("Frame"); SwHousing.Parent=ToggleFrame; SwHousing.BackgroundColor3=Color3.fromRGB(14,14,14)
 				SwHousing.BorderSizePixel=0; SwHousing.AnchorPoint=Vector2.new(1,0.5); SwHousing.Position=UDim2.new(1,-10,0.5,0); SwHousing.Size=UDim2.new(0,36,0,18); SwHousing.ZIndex=2
 				local SwHC=Instance.new("UICorner"); SwHC.CornerRadius=UDim.new(1,0); SwHC.Parent=SwHousing
@@ -3533,7 +3409,6 @@ end
 				local SwFC=Instance.new("UICorner"); SwFC.CornerRadius=UDim.new(1,0); SwFC.Parent=SwFill
 				grad(SwFill,ColorSequence.new({ColorSequenceKeypoint.new(0,Color3.fromRGB(40,40,40)),ColorSequenceKeypoint.new(1,Color3.fromRGB(220,220,220))}),0)
 
-				-- Knob: 14x14
 				local SwKnob=Instance.new("Frame"); SwKnob.Parent=SwHousing; SwKnob.BorderSizePixel=0; SwKnob.AnchorPoint=Vector2.new(0,0.5); SwKnob.ZIndex=4
 				local SwKC=Instance.new("UICorner"); SwKC.CornerRadius=UDim.new(1,0); SwKC.Parent=SwKnob
 				local SwKS=Instance.new("UIStroke"); SwKS.Thickness=1; SwKS.Parent=SwKnob
@@ -3569,7 +3444,6 @@ end
 				return ToglFunc
 			end
 
-			-- ── Checkbox ──────────────────────────────────────────────────────
 			function functionitem:Checkbox(CBName, default, callback)
 				local CBFunc={}; local CBState=default or false; callback=callback or function() end
 
@@ -3589,20 +3463,17 @@ end
 				CBLabel.Font=Enum.Font.Gotham; CBLabel.Text=tostring(CBName); CBLabel.TextColor3=CBState and TxtPri or TxtMut
 				CBLabel.TextXAlignment=Enum.TextXAlignment.Left; CBLabel.TextSize=11; CBLabel.ClipsDescendants=true; CBLabel.ZIndex=2
 
-				-- Checkbox box: 18x18
 				local CBBox=Instance.new("Frame"); CBBox.Parent=CBFrame; CBBox.BackgroundColor3=Color3.fromRGB(14,14,14)
 				CBBox.BorderSizePixel=0; CBBox.AnchorPoint=Vector2.new(1,0.5); CBBox.Position=UDim2.new(1,-10,0.5,0); CBBox.Size=UDim2.new(0,18,0,18); CBBox.ZIndex=2
 				local CBBoxC=Instance.new("UICorner"); CBBoxC.CornerRadius=UDim.new(0,5); CBBoxC.Parent=CBBox
 				local CBBoxS=Instance.new("UIStroke"); CBBoxS.Color=Color3.fromRGB(34,34,34); CBBoxS.Thickness=1; CBBoxS.Parent=CBBox
 
-				-- Fill layer
 				local CBFill=Instance.new("Frame"); CBFill.Parent=CBBox; CBFill.BackgroundColor3=Accent; CBFill.BorderSizePixel=0
 				CBFill.AnchorPoint=Vector2.new(0.5,0.5); CBFill.Position=UDim2.new(0.5,0,0.5,0)
 				CBFill.Size=CBState and UDim2.new(0,12,0,12) or UDim2.new(0,0,0,0); CBFill.ZIndex=3
 				local CBFillC=Instance.new("UICorner"); CBFillC.CornerRadius=UDim.new(0,3); CBFillC.Parent=CBFill
 				grad(CBFill,ColorSequence.new({ColorSequenceKeypoint.new(0,Color3.fromRGB(200,200,200)),ColorSequenceKeypoint.new(1,Color3.fromRGB(255,255,255))}),90)
 
-				-- Checkmark
 				local CBCheck=Instance.new("TextLabel"); CBCheck.Parent=CBBox; CBCheck.BackgroundTransparency=1
 				CBCheck.AnchorPoint=Vector2.new(0.5,0.5); CBCheck.Position=UDim2.new(0.5,0,0.5,0)
 				CBCheck.Size=UDim2.new(1,0,1,0); CBCheck.Font=Enum.Font.GothamBold; CBCheck.Text="✓"
@@ -3653,7 +3524,6 @@ end
 				return CBFunc
 			end
 
-			-- ── Small Input ───────────────────────────────────────────────────
 			function functionitem:InputSmall(TBName, Placeholder, callback)
 				callback=callback or function() end
 				local InputFrame=Instance.new("Frame"); InputFrame.Name="InputSmall"; InputFrame.Parent=SectionContainer
@@ -3688,7 +3558,6 @@ end
 				table.insert(FeatureRegistry,{name=tostring(TBName),tabName=Name,sectionName=SectionName,instance=InputFrame,tabBtn=TabBtn})
 			end
 
-			-- ── Large Input (multiline) ────────────────────────────────────────
 			function functionitem:InputLarge(TBName, Placeholder, callback)
 				callback=callback or function() end
 				local InputFrame=Instance.new("Frame"); InputFrame.Name="InputLarge"; InputFrame.Parent=SectionContainer
@@ -3726,7 +3595,6 @@ end
 				table.insert(FeatureRegistry,{name=tostring(TBName),tabName=Name,sectionName=SectionName,instance=InputFrame,tabBtn=TabBtn})
 			end
 
-			-- ── Classic Textbox ───────────────────────────────────────────────
 			function functionitem:Textbox(TBName, Placeholder, callback)
 				callback=callback or function() end
 				local TextboxFrame=Instance.new("Frame"); TextboxFrame.Name="Textbox"; TextboxFrame.Parent=SectionContainer
@@ -3754,7 +3622,6 @@ end
 				table.insert(FeatureRegistry,{name=tostring(TBName),tabName=Name,sectionName=SectionName,instance=TextboxFrame,tabBtn=TabBtn})
 			end
 
-			-- ── Dropdown ──────────────────────────────────────────────────────
 			local function buildDropHeader(parent, searchEnabled)
 			searchEnabled = searchEnabled or false
 			local Frame=Instance.new("Frame"); Frame.Name="MainDropDown"; Frame.Parent=parent
@@ -3780,10 +3647,8 @@ end
 			DDivider.Position=UDim2.new(0,0,0,34); DDivider.Size=UDim2.new(1,0,0,1); DDivider.ZIndex=17
 			fadeCenter(DDivider,Color3.fromRGB(26,26,26))
 
-			-- Search box (only if searchEnabled)
 			local SearchBox, SearchDivider
 			if searchEnabled then
-				-- Search container to hold icon + textbox side by side
 				local SearchContainer = Instance.new("Frame")
 				SearchContainer.Name = "SearchContainer"
 				SearchContainer.Parent = Frame
@@ -3795,7 +3660,6 @@ end
 				local SCCorner = Instance.new("UICorner"); SCCorner.CornerRadius = UDim.new(0,6); SCCorner.Parent = SearchContainer
 				local SCStroke = Instance.new("UIStroke"); SCStroke.Color = Color3.fromRGB(32,32,32); SCStroke.Thickness = 1; SCStroke.Parent = SearchContainer
 
-				-- Search icon (left side, sibling of TextBox)
 				local SBIcon = Instance.new("ImageLabel")
 				SBIcon.Name = "SearchIcon"
 				SBIcon.Parent = SearchContainer
@@ -3806,7 +3670,6 @@ end
 				SBIcon.ImageColor3 = Color3.fromRGB(55,55,55)
 				SBIcon.ZIndex = 18
 
-				-- TextBox (to the right of icon)
 				SearchBox = Instance.new("TextBox")
 				SearchBox.Name = "SearchBox"
 				SearchBox.Parent = SearchContainer
@@ -3867,7 +3730,6 @@ end
 			Arrow.Position=UDim2.new(1,-16,0.5,0); Arrow.Size=UDim2.new(0,10,0,10); Arrow.ZIndex=16
 			Arrow.Image="http://www.roblox.com/asset/?id=6282522798"; Arrow.ImageColor3=Color3.fromRGB(55,55,65)
 
-			-- Search box (only if searchEnabled) [MOVED TO PANEL]
 			local SearchBox = nil
 
 			return Frame, HitBtn, DisplayText, Arrow, FStroke, SearchBox
@@ -3989,7 +3851,6 @@ end
 			for _,v in next,list do Dropfunc:Add(v) end; updateText(); refreshCanvas()
 			if selected then callback(selected) end
 
-			-- Search functionality
 			if search and SearchBox then
 				SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
 					local query = SearchBox.Text:lower()
@@ -4059,7 +3920,6 @@ end
 			for _,v in next,list do Dropfunc:Add(v) end; updateText(); refreshCanvas()
 			if #DropTable>0 then callback(DropTable) end
 
-			-- Search functionality
 			if search and SearchBox then
 				SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
 					local query = SearchBox.Text:lower()
@@ -4088,7 +3948,6 @@ end
 			end
 			task.defer(function() updateText(); DisplayText:GetPropertyChangedSignal("AbsoluteSize"):Connect(updateText) end)
 
-			-- Floating dropdown panel - parented to UI for top ZIndex, position tracked to button
 			local Panel=Instance.new("Frame"); Panel.Name="DropPanel"; Panel.Parent=UI
 			Panel.BackgroundColor3=Color3.fromRGB(14,14,16); Panel.BorderSizePixel=0
 			Panel.Position=UDim2.new(0,0,0,0); Panel.Size=UDim2.new(0,200,0,0)
@@ -4101,7 +3960,6 @@ end
 			local PShimmerGrad=Instance.new("UIGradient"); PShimmerGrad.Rotation=0; PShimmerGrad.Parent=PShimmer
 			startShimmerAnimation(PShimmerGrad,0.8,0.04,0.35)
 
-			-- Search box inside Panel (V2 floating dropdown)
 			local SearchBox
 			if search then
 				local SearchContainer = Instance.new("Frame")
@@ -4199,7 +4057,6 @@ end
 				Panel.BackgroundTransparency=1; PStroke.Transparency=1
 				Panel.Visible=true
 
-				-- Sync position every frame while open to follow scrolling
 				posConn = RunService.Heartbeat:Connect(syncPanelPos)
 
 				local contentH=math.clamp(SList.AbsoluteContentSize.Y+18,40,220)
@@ -4257,7 +4114,6 @@ end
 			for _,v in next,list do Dropfunc:Add(v) end; updateText(); refreshCanvas()
 			if selected then callback(selected) end
 
-			-- Search functionality for floating panel
 			if search and SearchBox then
 				SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
 					local query = SearchBox.Text:lower()
@@ -4289,7 +4145,6 @@ end
 			end
 			task.defer(function() updateText(); DisplayText:GetPropertyChangedSignal("AbsoluteSize"):Connect(updateText) end)
 
-			-- Floating dropdown panel - parented to UI for top ZIndex, position tracked to button
 			local Panel=Instance.new("Frame"); Panel.Name="DropPanel"; Panel.Parent=UI
 			Panel.BackgroundColor3=Color3.fromRGB(14,14,16); Panel.BorderSizePixel=0
 			Panel.Position=UDim2.new(0,0,0,0); Panel.Size=UDim2.new(0,200,0,0)
@@ -4302,7 +4157,6 @@ end
 			local PShimmerGrad=Instance.new("UIGradient"); PShimmerGrad.Rotation=0; PShimmerGrad.Parent=PShimmer
 			startShimmerAnimation(PShimmerGrad,0.8,0.04,0.35)
 
-			-- Search box inside Panel (V2 floating dropdown)
 			local SearchBox
 			if search then
 				local SearchContainer = Instance.new("Frame")
@@ -4400,7 +4254,6 @@ end
 				Panel.BackgroundTransparency=1; PStroke.Transparency=1
 				Panel.Visible=true
 
-				-- Sync position every frame while open to follow scrolling
 				posConn = RunService.Heartbeat:Connect(syncPanelPos)
 
 				local contentH=math.clamp(SList.AbsoluteContentSize.Y+18,40,220)
@@ -4427,7 +4280,6 @@ end
 
 			HitBtn.MouseButton1Click:Connect(openPanel)
 
-			-- Close panel when switching tabs
 			Page:GetPropertyChangedSignal("Visible"):Connect(function()
 				if not Page.Visible and panelOpen then
 					closePanel()
@@ -4455,7 +4307,6 @@ end
 			for _,v in next,list do Dropfunc:Add(v) end; updateText(); refreshCanvas()
 			if #DropTable>0 then callback(DropTable) end
 
-			-- Search functionality for floating panel
 			if search and SearchBox then
 				SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
 					local query = SearchBox.Text:lower()
@@ -4545,7 +4396,6 @@ end
 				TabBgImage.ImageTransparency = 0.1
 				if color then TabBgImage.ImageColor3 = color end
 
-				-- If tab is currently active, fade image in now
 				if Page.Visible then
 					TabBgImage.Visible = true
 					Tween(TabBgImage, {ImageTransparency = transparency or 0.1}, 0.35, Enum.EasingStyle.Quart)
