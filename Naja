@@ -1,5 +1,14 @@
 local library = {}
 
+_G.NaJaIcons = (function()
+	local s,r = pcall(function()
+		local src = game:HttpGet("https://raw.githubusercontent.com/ErasedDiavolo/Naja/refs/heads/main/Icon")
+		local f = loadstring(src)
+		return f and f() or {}
+	end)
+	return s and r or {}
+end)()
+
 function library:NaJa(config)
 	config = config or {}
 
@@ -698,7 +707,7 @@ end
 	SizePanel.ClipsDescendants=true; SizePanel.ZIndex=300
 
 	local SizePanelCorner=Instance.new("UICorner"); SizePanelCorner.CornerRadius=UDim.new(0,10); SizePanelCorner.Parent=SizePanel
-	local SizePanelStroke=Instance.new("UIStroke"); SizePanelStroke.Color=Color3.fromRGB(30,30,30); SizePanelStroke.Thickness=1; SizePanelStroke.Parent=SizePanel
+	local SizePanelStroke=Instance.new("UIStroke"); SizePanelStroke.Color=Color3.fromRGB(30,30,30); SizePanelStroke.Thickness=1; SizePanelStroke.Transparency=1; SizePanelStroke.Parent=SizePanel
 
 	local SPShimmerGrad=Instance.new("UIGradient"); SPShimmerGrad.Rotation=0
 	local SPShimmer=Instance.new("Frame")
@@ -754,7 +763,7 @@ end
 					if dot then Tween(dot,{BackgroundTransparency=1},0.15) end
 				end
 			end
-			applyUISize(option); panelOpen=false; Tween(SizePanel,{Size=UDim2.new(0,112,0,0)},0.18)
+			applyUISize(option); panelOpen=false; Tween(SizePanel,{Size=UDim2.new(0,112,0,0)},0.18); Tween(SizePanelStroke,{Transparency=1},0.18)
 		end)
 		table.insert(sizeButtons, btn)
 	end
@@ -762,9 +771,11 @@ end
 	SizeDropdown.MouseButton1Click:Connect(function()
 		panelOpen=not panelOpen
 		if panelOpen then
+			Tween(SizePanelStroke,{Transparency=0},0.1)
 			Tween(SizePanel,{Size=UDim2.new(0,112,0,#sizeOptions*32+16)},0.24,Enum.EasingStyle.Back,Enum.EasingDirection.Out)
 		else
 			Tween(SizePanel,{Size=UDim2.new(0,112,0,0)},0.18)
+			Tween(SizePanelStroke,{Transparency=1},0.18)
 		end
 	end)
 	UserInputService.InputBegan:Connect(function(input, gp)
@@ -776,7 +787,7 @@ end
 				local bp=SizeDropdown.AbsolutePosition; local bs=SizeDropdown.AbsoluteSize
 				local inP=mp.X>=pp.X and mp.X<=pp.X+ps.X and mp.Y>=pp.Y and mp.Y<=pp.Y+ps.Y
 				local inB=mp.X>=bp.X and mp.X<=bp.X+bs.X and mp.Y>=bp.Y and mp.Y<=bp.Y+bs.Y
-				if not inP and not inB then panelOpen=false; Tween(SizePanel,{Size=UDim2.new(0,112,0,0)},0.18) end
+				if not inP and not inB then panelOpen=false; Tween(SizePanel,{Size=UDim2.new(0,112,0,0)},0.18); Tween(SizePanelStroke,{Transparency=1},0.18) end
 			end
 		end
 	end)
@@ -1181,7 +1192,7 @@ end
 		i.Name = "BannerImage"
 		i.BackgroundTransparency = 1
 		i.Size = UDim2.new(1, 0, 1, 0)
-		i.Image = "rbxassetid://91070444331154"
+        i.Image = (_G.NaJaIcons["banner"] or "rbxassetid://91070444331154")
 		i.ScaleType = Enum.ScaleType.Crop
 		i.ZIndex = 502
 
@@ -1992,7 +2003,7 @@ end)
 
 		local TabIcon=Instance.new("ImageLabel"); TabIcon.Name="TabIcon"; TabIcon.Parent=TabBtn
 		TabIcon.BackgroundTransparency=1; TabIcon.Position=UDim2.new(0,14,0.5,-7); TabIcon.Size=UDim2.new(0,14,0,14)
-		TabIcon.Image="http://www.roblox.com/asset/?id="..tostring(icon); TabIcon.ImageColor3=TxtMut; TabIcon.ZIndex=2
+        TabIcon.Image=(_G.NaJaIcons[tostring(icon):lower():gsub("%s+","-")] or (tonumber(icon) and "http://www.roblox.com/asset/?id="..tostring(icon) or tostring(icon)));
 
 		local TabLabel=Instance.new("TextLabel"); TabLabel.Name="TabLabel"; TabLabel.Parent=TabBtn
 		TabLabel.BackgroundTransparency=1; TabLabel.Position=UDim2.new(0,34,0,0); TabLabel.Size=UDim2.new(1,-42,1,0)
@@ -2003,7 +2014,7 @@ end)
 		-- Page with slide-in animation
 		local Page=Instance.new("ScrollingFrame"); Page.Name=Name.."Page"; Page.Parent=Bottom
 		Page.BackgroundTransparency=1; Page.Position=UDim2.new(0,0,0,0); Page.Size=UDim2.new(1,0,1,0)
-		Page.ScrollBarThickness=2; Page.ScrollBarImageColor3=Color3.fromRGB(32,32,32); Page.CanvasSize=UDim2.new(0,0,0,0); Page.Visible=false
+		Page.ScrollBarThickness=0; Page.ScrollBarImageColor3=Color3.fromRGB(32,32,32); Page.CanvasSize=UDim2.new(0,0,0,0); Page.Visible=false
 
 		-- Tab background image (fills entire content area / Bottom frame)
 		local TabBgImage = Instance.new("ImageLabel")
@@ -2217,24 +2228,9 @@ end)
 				BannerImage.BackgroundTransparency = 1
 				BannerImage.Position = UDim2.new(0, 0, 0, 0)
 				BannerImage.Size = UDim2.new(1, 0, 0, bannerH)
-				BannerImage.Image = config.Banner
+				BannerImage.Image = (_G.NaJaIcons[tostring(config.Banner or ""):lower():gsub("%s+","-")] or config.Banner or "")
 				BannerImage.ScaleType = config.BannerScaleType or Enum.ScaleType.Crop
 				BannerImage.ZIndex = 2
-
-				-- Bottom gradient fade to card bg
-				local BannerGrad = Instance.new("UIGradient")
-				BannerGrad.Color = ColorSequence.new({
-					ColorSequenceKeypoint.new(0, Color3.fromRGB(13, 13, 13)),
-					ColorSequenceKeypoint.new(0.5, Color3.fromRGB(13, 13, 13)),
-					ColorSequenceKeypoint.new(1, Color3.fromRGB(13, 13, 13))
-				})
-				BannerGrad.Rotation = 90
-				BannerGrad.Transparency = NumberSequence.new({
-					NumberSequenceKeypoint.new(0, 1),
-					NumberSequenceKeypoint.new(0.5, 0.9),
-					NumberSequenceKeypoint.new(1, 0)
-				})
-				BannerGrad.Parent = BannerImage
 			end
 
 			-- Content area
@@ -2291,7 +2287,7 @@ end)
 				PfpImage.AnchorPoint = Vector2.new(0.5, 0.5)
 				PfpImage.Position = UDim2.new(0.5, 0, 0.5, 0)
 				PfpImage.Size = UDim2.new(1, -4, 1, -4)
-				PfpImage.Image = config.Pfp
+                PfpImage.Image = (_G.NaJaIcons[tostring(config.Pfp or ""):lower():gsub("%s+","-")] or config.Pfp or "")
 				PfpImage.ZIndex = 5
 
 				local PfpCorner = Instance.new("UICorner")
@@ -2639,7 +2635,7 @@ end)
     ImageLabel.Parent = ImageFrame
     ImageLabel.BackgroundTransparency = 1
     ImageLabel.Size = UDim2.new(1, 0, 1, 0)
-    ImageLabel.Image = config.Image or ""
+    ImageLabel.Image = (_G.NaJaIcons[tostring(config.Image or ""):lower():gsub("%s+","-")] or config.Image or "")
     ImageLabel.ScaleType = config.ScaleType or Enum.ScaleType.Fit
     ImageLabel.ZIndex = 2
 
@@ -2940,9 +2936,10 @@ end
             return textas
         end
 
-            			function functionitem:AnimatedParagraph(text, speed, color)
+			function functionitem:AnimatedParagraph(text, speed, color, loop)
 				speed = speed or 0.05
 				color = resolveColor(color) or Color3.fromRGB(120, 120, 120)
+				loop = loop or false
 
 				local textas = {}
 				local Label = Instance.new("Frame")
@@ -2966,60 +2963,121 @@ end
 				TextLabel.TextWrapped = true
 				TextLabel.TextYAlignment = Enum.TextYAlignment.Top
 
-				-- Walk up hierarchy: SectionContainer -> Section -> Left/Right -> Page
 				local Section = SectionContainer.Parent
 				local Column = Section and Section.Parent
-				local Page = Column and Column.Parent
+				local ColumnsContainer = Column and Column.Parent
+				local Page = ColumnsContainer and ColumnsContainer.Parent
 
-				local fullText = tostring(text)
-				local shouldStop = false
-				local isTyping = false
-
-				local function reset()
-					shouldStop = true
-					isTyping = false
-					TextLabel.Text = ""
+				-- Support single string or table of messages
+				local messages = {}
+				if type(text) == "table" then
+					for _, msg in ipairs(text) do
+						table.insert(messages, tostring(msg))
+					end
+				else
+					table.insert(messages, tostring(text))
 				end
 
-				local function startTyping()
-					if isTyping then return end
-					if not Label.Parent then return end
-					if TextLabel.Text == fullText then
-						TextLabel.Text = ""
+				local msgIndex = 1
+				local active = false
+				local lastVisible = false
+				local animThread = nil
+
+				local function runAnimation()
+					if animThread then
+						active = false
 						task.wait(0.05)
 					end
 
-					isTyping = true
-					shouldStop = false
+					active = true
 
-					task.spawn(function()
-						for i = 1, #fullText do
-							if shouldStop or not Label.Parent then break end
-							TextLabel.Text = fullText:sub(1, i)
-							task.wait(speed)
+					animThread = task.spawn(function()
+						while active and Label.Parent do
+							local currentMsg = messages[msgIndex]
+							if not currentMsg then break end
+
+							-- TYPE
+							TextLabel.Text = ""
+							for i = 1, #currentMsg do
+								if not active or not Label.Parent then break end
+								TextLabel.Text = currentMsg:sub(1, i)
+								task.wait(speed)
+							end
+
+							if not active or not Label.Parent then break end
+
+							-- Pause at full text
+							task.wait(speed * 5)
+
+							if not active or not Label.Parent then break end
+
+							-- Check if this is the last message and loop is false
+							local isLastMessage = (msgIndex == #messages)
+
+							-- ERASE (only if not the last message when loop=false)
+							if not (isLastMessage and not loop) then
+								for i = #currentMsg, 1, -1 do
+									if not active or not Label.Parent then break end
+									TextLabel.Text = currentMsg:sub(1, i - 1)
+									task.wait(speed * 0.6)
+								end
+							end
+
+							if not active or not Label.Parent then break end
+
+							-- Move to next message
+							msgIndex = msgIndex + 1
+							if msgIndex > #messages then
+								if loop then
+									msgIndex = 1
+								else
+									break
+								end
+							end
+
+							-- Pause before next message
+							task.wait(speed * 3)
 						end
-						isTyping = false
+
+						animThread = nil
 					end)
 				end
 
+				local function stopAnimation()
+					active = false
+					TextLabel.Text = ""
+				end
+
 				if Page then
-					Page:GetPropertyChangedSignal("Visible"):Connect(function()
-						if Page.Visible then
-							reset()
-							task.delay(0.12, startTyping)
-						else
-							reset()
+					local checkConn
+					checkConn = RunService.Heartbeat:Connect(function()
+						if not Label or not Label.Parent then
+							if checkConn then checkConn:Disconnect() end
+							stopAnimation()
+							return
 						end
+
+						local currentlyVisible = Page.Visible
+						if currentlyVisible and not lastVisible then
+							-- Tab became visible
+							stopAnimation()
+							msgIndex = 1
+							task.delay(0.12, runAnimation)
+						elseif not currentlyVisible and lastVisible then
+							-- Tab hidden
+							stopAnimation()
+						end
+						lastVisible = currentlyVisible
 					end)
 
-					-- Auto-start if the tab is already open when this element is created
 					if Page.Visible then
-						task.delay(0.12, startTyping)
+						lastVisible = true
+						task.delay(0.12, runAnimation)
 					end
 				end
 
 				table.insert(FeatureRegistry, {
-					name = tostring(text),
+					name = tostring(type(text) == "table" and (text[1] or "AnimatedParagraph") or text),
 					tabName = Name,
 					sectionName = SectionName,
 					instance = Label,
@@ -3027,17 +3085,36 @@ end
 				})
 
 				function textas:Set(newtext)
-					fullText = tostring(newtext)
-					reset()
+					if type(newtext) == "table" then
+						messages = {}
+						for _, msg in ipairs(newtext) do
+							table.insert(messages, tostring(msg))
+						end
+					else
+						messages = {tostring(newtext)}
+					end
+					msgIndex = 1
 					if Page and Page.Visible then
-						task.delay(0.08, startTyping)
+						stopAnimation()
+						task.delay(0.08, runAnimation)
+					else
+						TextLabel.Text = ""
+					end
+				end
+
+				function textas:SetLoop(enabled)
+					loop = enabled
+					if Page and Page.Visible then
+						stopAnimation()
+						msgIndex = 1
+						task.delay(0.08, runAnimation)
 					end
 				end
 
 				return textas
 			end
-
-            function functionitem:Keybind(KBName, defaultKey, callback)
+            
+    function functionitem:Keybind(KBName, defaultKey, callback)
     local TweenService = game:GetService("TweenService")
     local UserInputService = game:GetService("UserInputService")
     local TextService = game:GetService("TextService")
@@ -3678,39 +3755,106 @@ end
 			end
 
 			-- ── Dropdown ──────────────────────────────────────────────────────
-			local function buildDropHeader(parent)
-				local Frame=Instance.new("Frame"); Frame.Name="MainDropDown"; Frame.Parent=parent
-				Frame.BackgroundColor3=Color3.fromRGB(13,13,13); Frame.BackgroundTransparency=0; Frame.BorderSizePixel=0; Frame.ClipsDescendants=true; Frame.Size=UDim2.new(1,0,0,34); Frame.ZIndex=16
-				local FCorner=Instance.new("UICorner"); FCorner.CornerRadius=UDim.new(0,9); FCorner.Parent=Frame
-				local FStroke=Instance.new("UIStroke"); FStroke.Color=Color3.fromRGB(28,28,28); FStroke.Thickness=1; FStroke.Parent=Frame
-				local FShimmerGrad=Instance.new("UIGradient"); FShimmerGrad.Rotation=0
-				local FShimmer=Instance.new("Frame"); FShimmer.Parent=Frame; FShimmer.BackgroundColor3=Color3.fromRGB(255,255,255)
-				FShimmer.BorderSizePixel=0; FShimmer.Position=UDim2.new(0,0,0,0); FShimmer.Size=UDim2.new(1,0,0,1); FShimmer.ZIndex=17
-				FShimmerGrad.Parent=FShimmer; startShimmerAnimation(FShimmerGrad,0.7,0.03,0.28)
-				local HitBtn=Instance.new("TextButton"); HitBtn.Name="v"; HitBtn.Parent=Frame; HitBtn.BackgroundTransparency=1; HitBtn.BorderSizePixel=0; HitBtn.Size=UDim2.new(1,0,0,34); HitBtn.ZIndex=16; HitBtn.AutoButtonColor=false; HitBtn.Text=""
-				local DDIcon=Instance.new("Frame"); DDIcon.Parent=Frame; DDIcon.BackgroundColor3=Color3.fromRGB(20,20,20); DDIcon.BorderSizePixel=0
-				DDIcon.AnchorPoint=Vector2.new(0,0.5); DDIcon.Position=UDim2.new(0,9,0,17); DDIcon.Size=UDim2.new(0,3,0,14); DDIcon.ZIndex=16
-				local DDIconC=Instance.new("UICorner"); DDIconC.CornerRadius=UDim.new(1,0); DDIconC.Parent=DDIcon
-				grad(DDIcon,ColorSequence.new({ColorSequenceKeypoint.new(0,Color3.fromRGB(255,255,255)),ColorSequenceKeypoint.new(1,Color3.fromRGB(45,45,45))}),90)
-				local DisplayText=Instance.new("TextLabel"); DisplayText.Name="Text"; DisplayText.Parent=Frame; DisplayText.BackgroundTransparency=1
-				DisplayText.Position=UDim2.new(0,20,0,0); DisplayText.Size=UDim2.new(1,-40,0,34); DisplayText.ZIndex=16
-				DisplayText.Font=Enum.Font.Gotham; DisplayText.Text=""; DisplayText.TextColor3=TxtMut; DisplayText.TextXAlignment=Enum.TextXAlignment.Left; DisplayText.ClipsDescendants=true
-				local Arrow=Instance.new("ImageButton"); Arrow.Parent=Frame; Arrow.AnchorPoint=Vector2.new(0.5,0.5); Arrow.BackgroundTransparency=1
-				Arrow.Position=UDim2.new(1,-16,0,17); Arrow.Size=UDim2.new(0,10,0,10); Arrow.ZIndex=16
-				Arrow.Image="http://www.roblox.com/asset/?id=6282522798"; Arrow.ImageColor3=Color3.fromRGB(40,40,40)
-				local DDivider=Instance.new("Frame"); DDivider.Parent=Frame; DDivider.BackgroundColor3=Color3.fromRGB(255,255,255); DDivider.BorderSizePixel=0
-				DDivider.Position=UDim2.new(0,0,0,34); DDivider.Size=UDim2.new(1,0,0,1); DDivider.ZIndex=17
-				fadeCenter(DDivider,Color3.fromRGB(26,26,26))
-				local Scroll=Instance.new("ScrollingFrame"); Scroll.Name="Scroll_Items"; Scroll.Parent=Frame; Scroll.Active=true
-				Scroll.BackgroundTransparency=1; Scroll.BorderSizePixel=0; Scroll.Position=UDim2.new(0,0,0,35); Scroll.Size=UDim2.new(1,0,1,-35); Scroll.ZIndex=16
-				Scroll.ScrollBarThickness=2; Scroll.ScrollBarImageColor3=Color3.fromRGB(28,28,28); Scroll.CanvasSize=UDim2.new(0,0,0,0)
-				local SList=Instance.new("UIListLayout"); SList.Parent=Scroll; SList.SortOrder=Enum.SortOrder.LayoutOrder; SList.Padding=UDim.new(0,1)
-				local SPad=Instance.new("UIPadding"); SPad.Parent=Scroll
-				SPad.PaddingLeft=UDim.new(0,6); SPad.PaddingRight=UDim.new(0,6); SPad.PaddingTop=UDim.new(0,5); SPad.PaddingBottom=UDim.new(0,5)
-				return Frame, HitBtn, DisplayText, Arrow, Scroll, SList, FStroke, DDIcon
+			local function buildDropHeader(parent, searchEnabled)
+			searchEnabled = searchEnabled or false
+			local Frame=Instance.new("Frame"); Frame.Name="MainDropDown"; Frame.Parent=parent
+			Frame.BackgroundColor3=Color3.fromRGB(13,13,13); Frame.BackgroundTransparency=0; Frame.BorderSizePixel=0; Frame.ClipsDescendants=true; Frame.Size=UDim2.new(1,0,0,34); Frame.ZIndex=16
+			local FCorner=Instance.new("UICorner"); FCorner.CornerRadius=UDim.new(0,9); FCorner.Parent=Frame
+			local FStroke=Instance.new("UIStroke"); FStroke.Color=Color3.fromRGB(28,28,28); FStroke.Thickness=1; FStroke.Parent=Frame
+			local FShimmerGrad=Instance.new("UIGradient"); FShimmerGrad.Rotation=0
+			local FShimmer=Instance.new("Frame"); FShimmer.Parent=Frame; FShimmer.BackgroundColor3=Color3.fromRGB(255,255,255)
+			FShimmer.BorderSizePixel=0; FShimmer.Position=UDim2.new(0,0,0,0); FShimmer.Size=UDim2.new(1,0,0,1); FShimmer.ZIndex=17
+			FShimmerGrad.Parent=FShimmer; startShimmerAnimation(FShimmerGrad,0.7,0.03,0.28)
+			local HitBtn=Instance.new("TextButton"); HitBtn.Name="v"; HitBtn.Parent=Frame; HitBtn.BackgroundTransparency=1; HitBtn.BorderSizePixel=0; HitBtn.Size=UDim2.new(1,0,0,34); HitBtn.ZIndex=16; HitBtn.AutoButtonColor=false; HitBtn.Text=""
+			local DDIcon=Instance.new("Frame"); DDIcon.Parent=Frame; DDIcon.BackgroundColor3=Color3.fromRGB(20,20,20); DDIcon.BorderSizePixel=0
+			DDIcon.AnchorPoint=Vector2.new(0,0.5); DDIcon.Position=UDim2.new(0,9,0,17); DDIcon.Size=UDim2.new(0,3,0,14); DDIcon.ZIndex=16
+			local DDIconC=Instance.new("UICorner"); DDIconC.CornerRadius=UDim.new(1,0); DDIconC.Parent=DDIcon
+			grad(DDIcon,ColorSequence.new({ColorSequenceKeypoint.new(0,Color3.fromRGB(255,255,255)),ColorSequenceKeypoint.new(1,Color3.fromRGB(45,45,45))}),90)
+			local DisplayText=Instance.new("TextLabel"); DisplayText.Name="Text"; DisplayText.Parent=Frame; DisplayText.BackgroundTransparency=1
+			DisplayText.Position=UDim2.new(0,20,0,0); DisplayText.Size=UDim2.new(1,-40,0,34); DisplayText.ZIndex=16
+			DisplayText.Font=Enum.Font.Gotham; DisplayText.Text=""; DisplayText.TextColor3=TxtMut; DisplayText.TextXAlignment=Enum.TextXAlignment.Left; DisplayText.ClipsDescendants=true
+			local Arrow=Instance.new("ImageButton"); Arrow.Parent=Frame; Arrow.AnchorPoint=Vector2.new(0.5,0.5); Arrow.BackgroundTransparency=1
+			Arrow.Position=UDim2.new(1,-16,0,17); Arrow.Size=UDim2.new(0,10,0,10); Arrow.ZIndex=16
+			Arrow.Image="http://www.roblox.com/asset/?id=6282522798"; Arrow.ImageColor3=Color3.fromRGB(40,40,40)
+			local DDivider=Instance.new("Frame"); DDivider.Parent=Frame; DDivider.BackgroundColor3=Color3.fromRGB(255,255,255); DDivider.BorderSizePixel=0
+			DDivider.Position=UDim2.new(0,0,0,34); DDivider.Size=UDim2.new(1,0,0,1); DDivider.ZIndex=17
+			fadeCenter(DDivider,Color3.fromRGB(26,26,26))
+
+			-- Search box (only if searchEnabled)
+			local SearchBox, SearchDivider
+			if searchEnabled then
+				-- Search container to hold icon + textbox side by side
+				local SearchContainer = Instance.new("Frame")
+				SearchContainer.Name = "SearchContainer"
+				SearchContainer.Parent = Frame
+				SearchContainer.BackgroundColor3 = Color3.fromRGB(18,18,18)
+				SearchContainer.BorderSizePixel = 0
+				SearchContainer.Position = UDim2.new(0,6,0,36)
+				SearchContainer.Size = UDim2.new(1,-12,0,26)
+				SearchContainer.ZIndex = 17
+				local SCCorner = Instance.new("UICorner"); SCCorner.CornerRadius = UDim.new(0,6); SCCorner.Parent = SearchContainer
+				local SCStroke = Instance.new("UIStroke"); SCStroke.Color = Color3.fromRGB(32,32,32); SCStroke.Thickness = 1; SCStroke.Parent = SearchContainer
+
+				-- Search icon (left side, sibling of TextBox)
+				local SBIcon = Instance.new("ImageLabel")
+				SBIcon.Name = "SearchIcon"
+				SBIcon.Parent = SearchContainer
+				SBIcon.BackgroundTransparency = 1
+				SBIcon.Position = UDim2.new(0,8,0.5,-6)
+				SBIcon.Size = UDim2.new(0,12,0,12)
+				SBIcon.Image = "rbxassetid://121018724060431"
+				SBIcon.ImageColor3 = Color3.fromRGB(55,55,55)
+				SBIcon.ZIndex = 18
+
+				-- TextBox (to the right of icon)
+				SearchBox = Instance.new("TextBox")
+				SearchBox.Name = "SearchBox"
+				SearchBox.Parent = SearchContainer
+				SearchBox.BackgroundTransparency = 1
+				SearchBox.BorderSizePixel = 0
+				SearchBox.Position = UDim2.new(0,26,0,0)
+				SearchBox.Size = UDim2.new(1,-34,1,0)
+				SearchBox.ZIndex = 18
+				SearchBox.Font = Enum.Font.Gotham
+				SearchBox.PlaceholderText = "Search..."
+				SearchBox.PlaceholderColor3 = Color3.fromRGB(55,55,55)
+				SearchBox.Text = ""
+				SearchBox.TextColor3 = TxtPri
+				SearchBox.TextSize = 10
+				SearchBox.TextXAlignment = Enum.TextXAlignment.Left
+				SearchBox.ClearTextOnFocus = false
+
+				SearchBox.Focused:Connect(function() 
+					Tween(SCStroke,{Color=Color3.fromRGB(55,55,55)},0.14)
+					SBIcon.ImageColor3 = Color3.fromRGB(100,100,100)
+				end)
+				SearchBox.FocusLost:Connect(function() 
+					Tween(SCStroke,{Color=Color3.fromRGB(32,32,32)},0.14)
+					SBIcon.ImageColor3 = Color3.fromRGB(55,55,55)
+				end)
+
+				SearchDivider = Instance.new("Frame"); SearchDivider.Parent = Frame; SearchDivider.BackgroundColor3 = Color3.fromRGB(255,255,255)
+				SearchDivider.BorderSizePixel = 0; SearchDivider.Position = UDim2.new(0,0,0,65); SearchDivider.Size = UDim2.new(1,0,0,1); SearchDivider.ZIndex = 17
+				fadeCenter(SearchDivider,Color3.fromRGB(26,26,26))
 			end
 
-		local function buildDropHeaderV2(parent)
+			local Scroll=Instance.new("ScrollingFrame"); Scroll.Name="Scroll_Items"; Scroll.Parent=Frame; Scroll.Active=true
+			Scroll.BackgroundTransparency=1; Scroll.BorderSizePixel=0; 
+			if searchEnabled then
+				Scroll.Position=UDim2.new(0,0,0,66); Scroll.Size=UDim2.new(1,0,1,-66)
+			else
+				Scroll.Position=UDim2.new(0,0,0,35); Scroll.Size=UDim2.new(1,0,1,-35)
+			end
+			Scroll.ZIndex=16
+			Scroll.ScrollBarThickness=2; Scroll.ScrollBarImageColor3=Color3.fromRGB(28,28,28); Scroll.CanvasSize=UDim2.new(0,0,0,0)
+			local SList=Instance.new("UIListLayout"); SList.Parent=Scroll; SList.SortOrder=Enum.SortOrder.LayoutOrder; SList.Padding=UDim.new(0,1)
+			local SPad=Instance.new("UIPadding"); SPad.Parent=Scroll
+			SPad.PaddingLeft=UDim.new(0,6); SPad.PaddingRight=UDim.new(0,6); SPad.PaddingTop=UDim.new(0,5); SPad.PaddingBottom=UDim.new(0,5)
+			return Frame, HitBtn, DisplayText, Arrow, Scroll, SList, FStroke, DDIcon, SearchBox
+		end
+
+		local function buildDropHeaderV2(parent, searchEnabled)
+			searchEnabled = searchEnabled or false
 			local Frame=Instance.new("Frame"); Frame.Name="MainDropDownV2"; Frame.Parent=parent
 			Frame.BackgroundColor3=Color3.fromRGB(18,18,20); Frame.BackgroundTransparency=0; Frame.BorderSizePixel=0; Frame.Size=UDim2.new(1,0,0,34); Frame.ZIndex=16
 			local FCorner=Instance.new("UICorner"); FCorner.CornerRadius=UDim.new(0,8); FCorner.Parent=Frame
@@ -3722,36 +3866,40 @@ end
 			local Arrow=Instance.new("ImageLabel"); Arrow.Parent=Frame; Arrow.AnchorPoint=Vector2.new(0.5,0.5); Arrow.BackgroundTransparency=1
 			Arrow.Position=UDim2.new(1,-16,0.5,0); Arrow.Size=UDim2.new(0,10,0,10); Arrow.ZIndex=16
 			Arrow.Image="http://www.roblox.com/asset/?id=6282522798"; Arrow.ImageColor3=Color3.fromRGB(55,55,65)
-			return Frame, HitBtn, DisplayText, Arrow, FStroke
+
+			-- Search box (only if searchEnabled) [MOVED TO PANEL]
+			local SearchBox = nil
+
+			return Frame, HitBtn, DisplayText, Arrow, FStroke, SearchBox
 		end
 
-			local function makeDropItem(parent, text, isSelected)
-				local item=Instance.new("TextButton"); item.Name=tostring(text); item.Parent=parent; item.BackgroundColor3=Color3.fromRGB(11,11,11)
-				item.BackgroundTransparency=isSelected and 0 or 1; item.BorderSizePixel=0; item.Size=UDim2.new(1,0,0,28); item.ZIndex=17; item.AutoButtonColor=false; item.Font=Enum.Font.Gotham; item.Text=""
-				local IC=Instance.new("UICorner"); IC.CornerRadius=UDim.new(0,6); IC.Parent=item
-				local ItemBar=Instance.new("Frame"); ItemBar.Parent=item; ItemBar.BackgroundColor3=Accent; ItemBar.BorderSizePixel=0
-				ItemBar.AnchorPoint=Vector2.new(0,0.5); ItemBar.Position=UDim2.new(0,0,0.5,0); ItemBar.Size=UDim2.new(0,2,0.5,0); ItemBar.ZIndex=18
-				ItemBar.BackgroundTransparency=isSelected and 0 or 1
-				local ItemBarC=Instance.new("UICorner"); ItemBarC.CornerRadius=UDim.new(1,0); ItemBarC.Parent=ItemBar
-				grad(ItemBar,ColorSequence.new({ColorSequenceKeypoint.new(0,Color3.fromRGB(255,255,255)),ColorSequenceKeypoint.new(1,Color3.fromRGB(70,70,70))}),90)
-				local ItemLabel=Instance.new("TextLabel"); ItemLabel.Parent=item; ItemLabel.BackgroundTransparency=1; ItemLabel.Position=UDim2.new(0,10,0,0)
-				ItemLabel.Size=UDim2.new(1,-14,1,0); ItemLabel.Font=Enum.Font.Gotham; ItemLabel.Text=tostring(text)
-				ItemLabel.TextColor3=isSelected and TxtPri or TxtMut; ItemLabel.TextSize=11; ItemLabel.TextXAlignment=Enum.TextXAlignment.Left; ItemLabel.ZIndex=18
-				local itemSelected=isSelected
-				item.MouseEnter:Connect(function() Tween(item,{BackgroundTransparency=0,BackgroundColor3=Color3.fromRGB(18,18,18)},0.12); Tween(ItemLabel,{TextColor3=TxtPri},0.12); Tween(ItemBar,{BackgroundTransparency=0},0.12) end)
-				item.MouseLeave:Connect(function()
-					if not itemSelected then Tween(item,{BackgroundTransparency=1},0.12); Tween(ItemLabel,{TextColor3=TxtMut},0.12); Tween(ItemBar,{BackgroundTransparency=1},0.12)
-					else Tween(item,{BackgroundColor3=Color3.fromRGB(11,11,11),BackgroundTransparency=0},0.12); Tween(ItemLabel,{TextColor3=TxtPri},0.12); Tween(ItemBar,{BackgroundTransparency=0},0.12) end
-				end)
-				local function setSelected(sel)
-					itemSelected=sel
-					if sel then Tween(item,{BackgroundTransparency=0,BackgroundColor3=Color3.fromRGB(11,11,11)},0.18); Tween(ItemLabel,{TextColor3=TxtPri},0.18); Tween(ItemBar,{BackgroundTransparency=0},0.18)
-					else Tween(item,{BackgroundTransparency=1},0.18); Tween(ItemLabel,{TextColor3=TxtMut},0.18); Tween(ItemBar,{BackgroundTransparency=1},0.18) end
-				end
-				return item, ItemLabel, ItemBar, setSelected
+		local function makeDropItem(parent, text, isSelected)
+			local item=Instance.new("TextButton"); item.Name=tostring(text); item.Parent=parent; item.BackgroundColor3=Color3.fromRGB(11,11,11)
+			item.BackgroundTransparency=isSelected and 0 or 1; item.BorderSizePixel=0; item.Size=UDim2.new(1,0,0,28); item.ZIndex=17; item.AutoButtonColor=false; item.Font=Enum.Font.Gotham; item.Text=""
+			local IC=Instance.new("UICorner"); IC.CornerRadius=UDim.new(0,6); IC.Parent=item
+			local ItemBar=Instance.new("Frame"); ItemBar.Parent=item; ItemBar.BackgroundColor3=Accent; ItemBar.BorderSizePixel=0
+			ItemBar.AnchorPoint=Vector2.new(0,0.5); ItemBar.Position=UDim2.new(0,0,0.5,0); ItemBar.Size=UDim2.new(0,2,0.5,0); ItemBar.ZIndex=18
+			ItemBar.BackgroundTransparency=isSelected and 0 or 1
+			local ItemBarC=Instance.new("UICorner"); ItemBarC.CornerRadius=UDim.new(1,0); ItemBarC.Parent=ItemBar
+			grad(ItemBar,ColorSequence.new({ColorSequenceKeypoint.new(0,Color3.fromRGB(255,255,255)),ColorSequenceKeypoint.new(1,Color3.fromRGB(70,70,70))}),90)
+			local ItemLabel=Instance.new("TextLabel"); ItemLabel.Parent=item; ItemLabel.BackgroundTransparency=1; ItemLabel.Position=UDim2.new(0,10,0,0)
+			ItemLabel.Size=UDim2.new(1,-14,1,0); ItemLabel.Font=Enum.Font.Gotham; ItemLabel.Text=tostring(text)
+			ItemLabel.TextColor3=isSelected and TxtPri or TxtMut; ItemLabel.TextSize=11; ItemLabel.TextXAlignment=Enum.TextXAlignment.Left; ItemLabel.ZIndex=18
+			local itemSelected=isSelected
+			item.MouseEnter:Connect(function() Tween(item,{BackgroundTransparency=0,BackgroundColor3=Color3.fromRGB(18,18,18)},0.12); Tween(ItemLabel,{TextColor3=TxtPri},0.12); Tween(ItemBar,{BackgroundTransparency=0},0.12) end)
+			item.MouseLeave:Connect(function()
+				if not itemSelected then Tween(item,{BackgroundTransparency=1},0.12); Tween(ItemLabel,{TextColor3=TxtMut},0.12); Tween(ItemBar,{BackgroundTransparency=1},0.12)
+				else Tween(item,{BackgroundColor3=Color3.fromRGB(11,11,11),BackgroundTransparency=0},0.12); Tween(ItemLabel,{TextColor3=TxtPri},0.12); Tween(ItemBar,{BackgroundTransparency=0},0.12) end
+			end)
+			local function setSelected(sel)
+				itemSelected=sel
+				if sel then Tween(item,{BackgroundTransparency=0,BackgroundColor3=Color3.fromRGB(11,11,11)},0.18); Tween(ItemLabel,{TextColor3=TxtPri},0.18); Tween(ItemBar,{BackgroundTransparency=0},0.18)
+				else Tween(item,{BackgroundTransparency=1},0.18); Tween(ItemLabel,{TextColor3=TxtMut},0.18); Tween(ItemBar,{BackgroundTransparency=1},0.18) end
 			end
+			return item, ItemLabel, ItemBar, setSelected
+		end
 
-			local function makeDropItemV2(parent, text, isSelected)
+		local function makeDropItemV2(parent, text, isSelected)
 			local item=Instance.new("TextButton"); item.Name=tostring(text); item.Parent=parent; item.BackgroundColor3=Color3.fromRGB(22,22,26)
 			item.BackgroundTransparency=isSelected and 0 or 1; item.BorderSizePixel=0; item.Size=UDim2.new(1,-8,0,30); item.Position=UDim2.new(0,4,0,0); item.ZIndex=9002; item.AutoButtonColor=false; item.Font=Enum.Font.Gotham; item.Text=""
 			local IC=Instance.new("UICorner"); IC.CornerRadius=UDim.new(0,6); IC.Parent=item
@@ -3793,338 +3941,536 @@ end
 			return item, ItemLabel, setSelected
 		end
 
-			function functionitem:Dropdown(DDName, list, default, callback)
-				local Dropfunc={}; list=list or {}; callback=callback or function() end
-				local selected=(default and table.find(list,default)) and default or nil
-				local Frame,HitBtn,DisplayText,Arrow,Scroll,SList,FStroke,DDIcon=buildDropHeader(SectionContainer)
-				local function refreshCanvas() Scroll.CanvasSize=UDim2.new(0,0,0,SList.AbsoluteContentSize.Y+10) end
-				SList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(refreshCanvas)
-				local function updateText()
-					if selected then DisplayText.Text=DDName.."  ›  "..tostring(selected); DisplayText.TextColor3=TxtPri; Tween(DDIcon,{BackgroundColor3=Accent},0.18)
-					else DisplayText.Text=DDName; DisplayText.TextColor3=TxtMut; Tween(DDIcon,{BackgroundColor3=Color3.fromRGB(20,20,20)},0.18) end
-					fitText(DisplayText,DisplayText.Text,12,9)
-				end
-				task.defer(function() updateText(); DisplayText:GetPropertyChangedSignal("AbsoluteSize"):Connect(updateText) end)
-				local Tof=false
-				function Dropfunc:TogglePanel(state)
-					Tof=state and true or false
-					TweenService:Create(Frame,TweenInfo.new(0.25,Enum.EasingStyle.Quart,Enum.EasingDirection.Out),{Size=Tof and UDim2.new(1,0,0,math.clamp(42+SList.AbsoluteContentSize.Y+10,34,225)) or UDim2.new(1,0,0,34)}):Play()
-					TweenService:Create(Arrow,TweenInfo.new(0.22,Enum.EasingStyle.Quart,Enum.EasingDirection.Out),{Rotation=Tof and 180 or 0}):Play()
-					Tween(FStroke,{Color=Tof and Color3.fromRGB(48,48,48) or Color3.fromRGB(28,28,28)},0.22); Tween(Arrow,{ImageColor3=Tof and TxtPri or Color3.fromRGB(40,40,40)},0.22); refreshCanvas()
-				end
-				local function toggle() Dropfunc:TogglePanel(not Tof) end
-				Arrow.MouseButton1Click:Connect(toggle); HitBtn.MouseButton1Click:Connect(toggle)
-				local itemSetFns={}
-				function Dropfunc:Clear() for _,c in next,Scroll:GetChildren() do if c:IsA("TextButton") then c:Destroy() end end table.clear(itemSetFns); selected=nil; updateText(); refreshCanvas() end
-				function Dropfunc:Get() return selected end
-				function Dropfunc:Set(value,silent)
-					if table.find(list,value) then selected=value; updateText(); if not silent then callback(value) end
-						for _,fn in pairs(itemSetFns) do fn(false) end; if itemSetFns[value] then itemSetFns[value](true) end end
-				end
-				function Dropfunc:Add(Text)
-					local item,ItemLabel,ItemBar,setFn=makeDropItem(Scroll,Text,selected==Text)
-					itemSetFns[Text]=setFn
-					item.MouseButton1Click:Connect(function() selected=Text; updateText(); callback(Text); Dropfunc:TogglePanel(false); for key,fn in pairs(itemSetFns) do fn(key==Text) end end)
+		function functionitem:Dropdown(DDName, list, default, callback, search)
+			search = search or false
+			local Dropfunc={}; list=list or {}; callback=callback or function() end
+			local selected=(default and table.find(list,default)) and default or nil
+			local Frame,HitBtn,DisplayText,Arrow,Scroll,SList,FStroke,DDIcon,SearchBox=buildDropHeader(SectionContainer, search)
+			local function refreshCanvas() Scroll.CanvasSize=UDim2.new(0,0,0,SList.AbsoluteContentSize.Y+10) end
+			SList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(refreshCanvas)
+			local function updateText()
+				if selected then DisplayText.Text=DDName.."  ›  "..tostring(selected); DisplayText.TextColor3=TxtPri; Tween(DDIcon,{BackgroundColor3=Accent},0.18)
+				else DisplayText.Text=DDName; DisplayText.TextColor3=TxtMut; Tween(DDIcon,{BackgroundColor3=Color3.fromRGB(20,20,20)},0.18) end
+				fitText(DisplayText,DisplayText.Text,12,9)
+			end
+			task.defer(function() updateText(); DisplayText:GetPropertyChangedSignal("AbsoluteSize"):Connect(updateText) end)
+			local Tof=false
+			function Dropfunc:TogglePanel(state)
+				Tof=state and true or false
+				local searchOffset = (search and SearchBox) and 32 or 0
+				TweenService:Create(Frame,TweenInfo.new(0.25,Enum.EasingStyle.Quart,Enum.EasingDirection.Out),{Size=Tof and UDim2.new(1,0,0,math.clamp(42+searchOffset+SList.AbsoluteContentSize.Y+10,34,225)) or UDim2.new(1,0,0,34)}):Play()
+				TweenService:Create(Arrow,TweenInfo.new(0.22,Enum.EasingStyle.Quart,Enum.EasingDirection.Out),{Rotation=Tof and 180 or 0}):Play()
+				Tween(FStroke,{Color=Tof and Color3.fromRGB(48,48,48) or Color3.fromRGB(28,28,28)},0.22); Tween(Arrow,{ImageColor3=Tof and TxtPri or Color3.fromRGB(40,40,40)},0.22); refreshCanvas()
+				if Tof and search and SearchBox then
+					SearchBox.Text = ""
+					for _, child in ipairs(Scroll:GetChildren()) do
+						if child:IsA("TextButton") then child.Visible = true end
+					end
 					refreshCanvas()
 				end
-				for _,v in next,list do Dropfunc:Add(v) end; updateText(); refreshCanvas()
-				if selected then callback(selected) end
-				table.insert(FeatureRegistry,{name=tostring(DDName),tabName=Name,sectionName=SectionName,instance=Frame,tabBtn=TabBtn})
-				return Dropfunc
+			end
+			local function toggle() Dropfunc:TogglePanel(not Tof) end
+			Arrow.MouseButton1Click:Connect(toggle); HitBtn.MouseButton1Click:Connect(toggle)
+			local itemSetFns={}
+			local allItems = {}
+			function Dropfunc:Clear() for _,c in next,Scroll:GetChildren() do if c:IsA("TextButton") then c:Destroy() end end table.clear(itemSetFns); table.clear(allItems); selected=nil; updateText(); refreshCanvas() end
+			function Dropfunc:Get() return selected end
+			function Dropfunc:Set(value,silent)
+				if table.find(list,value) then selected=value; updateText(); if not silent then callback(value) end
+					for _,fn in pairs(itemSetFns) do fn(false) end; if itemSetFns[value] then itemSetFns[value](true) end end
+			end
+			function Dropfunc:Add(Text)
+				local item,ItemLabel,ItemBar,setFn=makeDropItem(Scroll,Text,selected==Text)
+				itemSetFns[Text]=setFn
+				table.insert(allItems, {item=item, text=Text})
+				item.MouseButton1Click:Connect(function() selected=Text; updateText(); callback(Text); Dropfunc:TogglePanel(false); for key,fn in pairs(itemSetFns) do fn(key==Text) end end)
+				refreshCanvas()
+			end
+			for _,v in next,list do Dropfunc:Add(v) end; updateText(); refreshCanvas()
+			if selected then callback(selected) end
+
+			-- Search functionality
+			if search and SearchBox then
+				SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
+					local query = SearchBox.Text:lower()
+					for _, entry in ipairs(allItems) do
+						local match = query == "" or entry.text:lower():find(query, 1, true)
+						entry.item.Visible = match
+					end
+					refreshCanvas()
+				end)
 			end
 
-			function functionitem:MultiDropdown(MDName, list, default, callback)
-				local Dropfunc={}; list=list or {}; callback=callback or function() end; local DropTable={}
-				if type(default)=="table" then for _,v in next,default do if table.find(list,v) and not table.find(DropTable,v) then table.insert(DropTable,v) end end end
-				local Frame,HitBtn,DisplayText,Arrow,Scroll,SList,FStroke,DDIcon=buildDropHeader(SectionContainer)
-				local function refreshCanvas() Scroll.CanvasSize=UDim2.new(0,0,0,SList.AbsoluteContentSize.Y+10) end
-				SList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(refreshCanvas)
-				local function updateText()
-					if #DropTable>0 then
-						if #DropTable<=3 then DisplayText.Text=MDName.."  ›  "..table.concat(DropTable,", ")
-						else DisplayText.Text=MDName.."  ›  "..table.concat({DropTable[1],DropTable[2],DropTable[3]},", ").."  +"..(#DropTable-3) end
-						DisplayText.TextColor3=TxtPri; Tween(DDIcon,{BackgroundColor3=Accent},0.18)
-					else DisplayText.Text=MDName; DisplayText.TextColor3=TxtMut; Tween(DDIcon,{BackgroundColor3=Color3.fromRGB(20,20,20)},0.18) end
-					fitText(DisplayText,DisplayText.Text,12,9)
-				end
-				task.defer(function() updateText(); DisplayText:GetPropertyChangedSignal("AbsoluteSize"):Connect(updateText) end)
-				local Tof=false
-				function Dropfunc:TogglePanel(state)
-					Tof=state and true or false
-					TweenService:Create(Frame,TweenInfo.new(0.25,Enum.EasingStyle.Quart,Enum.EasingDirection.Out),{Size=Tof and UDim2.new(1,0,0,math.clamp(42+SList.AbsoluteContentSize.Y+10,34,225)) or UDim2.new(1,0,0,34)}):Play()
-					TweenService:Create(Arrow,TweenInfo.new(0.22,Enum.EasingStyle.Quart,Enum.EasingDirection.Out),{Rotation=Tof and 180 or 0}):Play()
-					Tween(FStroke,{Color=Tof and Color3.fromRGB(48,48,48) or Color3.fromRGB(28,28,28)},0.22); Tween(Arrow,{ImageColor3=Tof and TxtPri or Color3.fromRGB(40,40,40)},0.22); refreshCanvas()
-				end
-				local function toggle() Dropfunc:TogglePanel(not Tof) end
-				Arrow.MouseButton1Click:Connect(toggle); HitBtn.MouseButton1Click:Connect(toggle)
-				function Dropfunc:Clear() for _,c in next,Scroll:GetChildren() do if c:IsA("TextButton") then c:Destroy() end end table.clear(DropTable); updateText(); refreshCanvas() end
-				function Dropfunc:Get() return DropTable end
-				function Dropfunc:Set(values,silent) table.clear(DropTable); if type(values)=="table" then for _,v in next,values do if table.find(list,v) and not table.find(DropTable,v) then table.insert(DropTable,v) end end end; updateText(); if not silent then callback(DropTable) end end
-				function Dropfunc:Add(Text)
-					local item,ItemLabel,ItemBar,setFn=makeDropItem(Scroll,Text,table.find(DropTable,Text)~=nil)
-					local Check=Instance.new("TextLabel"); Check.Name="Check"; Check.Parent=item; Check.BackgroundTransparency=1; Check.Size=UDim2.new(0,18,1,0); Check.Position=UDim2.new(1,-20,0,0)
-					Check.Font=Enum.Font.GothamBold; Check.Text="✓"; Check.TextSize=11; Check.TextColor3=Accent; Check.TextTransparency=table.find(DropTable,Text) and 0 or 1; Check.ZIndex=18
-					item.MouseButton1Click:Connect(function()
-						local found=table.find(DropTable,Text)
-						if not found then table.insert(DropTable,Text); Tween(Check,{TextTransparency=0},0.18); setFn(true)
-						else table.remove(DropTable,found); Tween(Check,{TextTransparency=1},0.18); setFn(false) end
-						updateText(); callback(DropTable,Text)
-					end); refreshCanvas()
-				end
-				for _,v in next,list do Dropfunc:Add(v) end; updateText(); refreshCanvas()
-				if #DropTable>0 then callback(DropTable) end
-				table.insert(FeatureRegistry,{name=tostring(MDName),tabName=Name,sectionName=SectionName,instance=Frame,tabBtn=TabBtn})
-				return Dropfunc
-			end
+			table.insert(FeatureRegistry,{name=tostring(DDName),tabName=Name,sectionName=SectionName,instance=Frame,tabBtn=TabBtn})
+			return Dropfunc
+		end
 
-			function functionitem:DropdownV2(DDName, list, default, callback)
-				local Dropfunc={}; list=list or {}; callback=callback or function() end
-				local selected=(default and table.find(list,default)) and default or nil
-				local Frame,HitBtn,DisplayText,Arrow,FStroke=buildDropHeaderV2(SectionContainer)
-				
-				local function updateText()
-					if selected then DisplayText.Text=DDName.."  ›  "..tostring(selected); DisplayText.TextColor3=TxtPri;
-					else DisplayText.Text=DDName; DisplayText.TextColor3=TxtMut; end
-					fitText(DisplayText,DisplayText.Text,12,9)
-				end
-				task.defer(function() updateText(); DisplayText:GetPropertyChangedSignal("AbsoluteSize"):Connect(updateText) end)
-				
-				-- Floating dropdown panel - parented to UI for top ZIndex, position tracked to button
-				local Panel=Instance.new("Frame"); Panel.Name="DropPanel"; Panel.Parent=UI
-				Panel.BackgroundColor3=Color3.fromRGB(14,14,16); Panel.BorderSizePixel=0
-				Panel.Position=UDim2.new(0,0,0,0); Panel.Size=UDim2.new(0,200,0,0)
-				Panel.ZIndex=9000; Panel.Visible=false; Panel.ClipsDescendants=true
-				local PCorner=Instance.new("UICorner"); PCorner.CornerRadius=UDim.new(0,10); PCorner.Parent=Panel
-				local PStroke=Instance.new("UIStroke"); PStroke.Color=Color3.fromRGB(40,40,48); PStroke.Thickness=1; PStroke.Parent=Panel
-				
-				local PShimmer=Instance.new("Frame"); PShimmer.Parent=Panel; PShimmer.BackgroundColor3=Color3.fromRGB(255,255,255)
-				PShimmer.BorderSizePixel=0; PShimmer.Position=UDim2.new(0,0,0,0); PShimmer.Size=UDim2.new(1,0,0,1); PShimmer.ZIndex=9001
-				local PShimmerGrad=Instance.new("UIGradient"); PShimmerGrad.Rotation=0; PShimmerGrad.Parent=PShimmer
-				startShimmerAnimation(PShimmerGrad,0.8,0.04,0.35)
-				
-				local Scroll=Instance.new("ScrollingFrame"); Scroll.Name="Scroll_Items"; Scroll.Parent=Panel; Scroll.Active=true
-				Scroll.BackgroundTransparency=1; Scroll.BorderSizePixel=0; Scroll.Position=UDim2.new(0,0,0,6); Scroll.Size=UDim2.new(1,0,1,-12); Scroll.ZIndex=9001
-				Scroll.ScrollBarThickness=2; Scroll.ScrollBarImageColor3=Color3.fromRGB(32,32,38); Scroll.CanvasSize=UDim2.new(0,0,0,0)
-				local SList=Instance.new("UIListLayout"); SList.Parent=Scroll; SList.SortOrder=Enum.SortOrder.LayoutOrder; SList.Padding=UDim.new(0,3)
-				local SPad=Instance.new("UIPadding"); SPad.Parent=Scroll
-				SPad.PaddingLeft=UDim.new(0,6); SPad.PaddingRight=UDim.new(0,6); SPad.PaddingTop=UDim.new(0,6); SPad.PaddingBottom=UDim.new(0,6)
-				
-				local function refreshCanvas() Scroll.CanvasSize=UDim2.new(0,0,0,SList.AbsoluteContentSize.Y+12) end
-				SList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(refreshCanvas)
-				
-				local panelOpen=false
-				local clickConn=nil
-				local posConn=nil
-				
-				local function syncPanelPos()
-					if not panelOpen or not Frame or not Frame.Parent then return end
-					local absPos = Frame.AbsolutePosition
-					local absSize = Frame.AbsoluteSize
-					Panel.Position = UDim2.new(0, absPos.X, 0, absPos.Y + absSize.Y + 4)
-					Panel.Size = UDim2.new(0, absSize.X, 0, Panel.AbsoluteSize.Y)
-				end
-				
-				local function closePanel()
-					if not panelOpen then return end
-					panelOpen=false
-					if posConn then posConn:Disconnect(); posConn=nil end
-					Tween(Panel,{Size=UDim2.new(0,Panel.AbsoluteSize.X,0,0)},0.2,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
-					Tween(Panel,{BackgroundTransparency=1},0.2)
-					Tween(PStroke,{Transparency=1},0.2)
-					Tween(Arrow,{Rotation=0},0.22,Enum.EasingStyle.Quart,Enum.EasingDirection.Out)
-					Tween(Arrow,{ImageColor3=Color3.fromRGB(55,55,65)},0.22)
-					Tween(FStroke,{Color=Color3.fromRGB(40,40,48)},0.22)
-					if clickConn then clickConn:Disconnect(); clickConn=nil end
-					task.delay(0.22,function() if Panel and Panel.Parent then Panel.Visible=false end end)
-				end
-				
-				local function openPanel()
-					if panelOpen then closePanel(); return end
-					panelOpen=true
-					
-					local absPos=Frame.AbsolutePosition
-					local absSize=Frame.AbsoluteSize
-					Panel.Position=UDim2.new(0,absPos.X,0,absPos.Y+absSize.Y+4)
-					Panel.Size=UDim2.new(0,absSize.X,0,0)
-					Panel.BackgroundTransparency=1; PStroke.Transparency=1
-					Panel.Visible=true
-					
-					-- Sync position every frame while open to follow scrolling
-					posConn = RunService.Heartbeat:Connect(syncPanelPos)
-					
-					local contentH=math.clamp(SList.AbsoluteContentSize.Y+18,40,220)
-					Tween(Panel,{Size=UDim2.new(0,absSize.X,0,contentH)},0.25,Enum.EasingStyle.Back,Enum.EasingDirection.Out)
-					Tween(Panel,{BackgroundTransparency=0},0.2)
-					Tween(PStroke,{Transparency=0},0.2)
-					Tween(Arrow,{Rotation=180},0.22,Enum.EasingStyle.Quart,Enum.EasingDirection.Out)
-					Tween(Arrow,{ImageColor3=TxtPri},0.22)
-					Tween(FStroke,{Color=Color3.fromRGB(60,60,70)},0.22)
-					
-					task.delay(0.05,function()
-						clickConn=UserInputService.InputBegan:Connect(function(input,gp)
-							if gp then return end
-							if input.UserInputType~=Enum.UserInputType.MouseButton1 and input.UserInputType~=Enum.UserInputType.Touch then return end
-							local mp=input.Position
-							local pp=Panel.AbsolutePosition; local ps=Panel.AbsoluteSize
-							local fp=Frame.AbsolutePosition; local fs=Frame.AbsoluteSize
-							local inPanel=mp.X>=pp.X and mp.X<=pp.X+ps.X and mp.Y>=pp.Y and mp.Y<=pp.Y+ps.Y
-							local inFrame=mp.X>=fp.X and mp.X<=fp.X+fs.X and mp.Y>=fp.Y and mp.Y<=fp.Y+fs.Y
-							if not inPanel and not inFrame then closePanel() end
-						end)
-					end)
-				end
-				
-				HitBtn.MouseButton1Click:Connect(openPanel)
-				
-				local itemSetFns={}
-				function Dropfunc:Clear() 
-					for _,c in next,Scroll:GetChildren() do if c:IsA("TextButton") then c:Destroy() end end 
-					table.clear(itemSetFns); selected=nil; updateText(); refreshCanvas() 
-				end
-				function Dropfunc:Get() return selected end
-				function Dropfunc:Set(value,silent)
-					if table.find(list,value) then selected=value; updateText(); if not silent then callback(value) end
-						for _,fn in pairs(itemSetFns) do fn(false) end; if itemSetFns[value] then itemSetFns[value](true) end end
-				end
-				function Dropfunc:Add(Text)
-					local item,ItemLabel,setFn=makeDropItemV2(Scroll,Text,selected==Text)
-					itemSetFns[Text]=setFn
-					item.MouseButton1Click:Connect(function() 
-						selected=Text; updateText(); callback(Text); 
-						closePanel(); 
-						for key,fn in pairs(itemSetFns) do fn(key==Text) end 
-					end)
+		function functionitem:MultiDropdown(MDName, list, default, callback, search)
+			search = search or false
+			local Dropfunc={}; list=list or {}; callback=callback or function() end; local DropTable={}
+			if type(default)=="table" then for _,v in next,default do if table.find(list,v) and not table.find(DropTable,v) then table.insert(DropTable,v) end end end
+			local Frame,HitBtn,DisplayText,Arrow,Scroll,SList,FStroke,DDIcon,SearchBox=buildDropHeader(SectionContainer, search)
+			local function refreshCanvas() Scroll.CanvasSize=UDim2.new(0,0,0,SList.AbsoluteContentSize.Y+10) end
+			SList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(refreshCanvas)
+			local function updateText()
+				if #DropTable>0 then
+					if #DropTable<=3 then DisplayText.Text=MDName.."  ›  "..table.concat(DropTable,", ")
+					else DisplayText.Text=MDName.."  ›  "..table.concat({DropTable[1],DropTable[2],DropTable[3]},", ").."  +"..(#DropTable-3) end
+					DisplayText.TextColor3=TxtPri; Tween(DDIcon,{BackgroundColor3=Accent},0.18)
+				else DisplayText.Text=MDName; DisplayText.TextColor3=TxtMut; Tween(DDIcon,{BackgroundColor3=Color3.fromRGB(20,20,20)},0.18) end
+				fitText(DisplayText,DisplayText.Text,12,9)
+			end
+			task.defer(function() updateText(); DisplayText:GetPropertyChangedSignal("AbsoluteSize"):Connect(updateText) end)
+			local Tof=false
+			function Dropfunc:TogglePanel(state)
+				Tof=state and true or false
+				local searchOffset = (search and SearchBox) and 32 or 0
+				TweenService:Create(Frame,TweenInfo.new(0.25,Enum.EasingStyle.Quart,Enum.EasingDirection.Out),{Size=Tof and UDim2.new(1,0,0,math.clamp(42+searchOffset+SList.AbsoluteContentSize.Y+10,34,225)) or UDim2.new(1,0,0,34)}):Play()
+				TweenService:Create(Arrow,TweenInfo.new(0.22,Enum.EasingStyle.Quart,Enum.EasingDirection.Out),{Rotation=Tof and 180 or 0}):Play()
+				Tween(FStroke,{Color=Tof and Color3.fromRGB(48,48,48) or Color3.fromRGB(28,28,28)},0.22); Tween(Arrow,{ImageColor3=Tof and TxtPri or Color3.fromRGB(40,40,40)},0.22); refreshCanvas()
+				if Tof and search and SearchBox then
+					SearchBox.Text = ""
+					for _, child in ipairs(Scroll:GetChildren()) do
+						if child:IsA("TextButton") then child.Visible = true end
+					end
 					refreshCanvas()
 				end
-				for _,v in next,list do Dropfunc:Add(v) end; updateText(); refreshCanvas()
-				if selected then callback(selected) end
-				table.insert(FeatureRegistry,{name=tostring(DDName),tabName=Name,sectionName=SectionName,instance=Frame,tabBtn=TabBtn})
-				return Dropfunc
+			end
+			local function toggle() Dropfunc:TogglePanel(not Tof) end
+			Arrow.MouseButton1Click:Connect(toggle); HitBtn.MouseButton1Click:Connect(toggle)
+			local itemSetFns={}
+			local allItems = {}
+			function Dropfunc:Clear() for _,c in next,Scroll:GetChildren() do if c:IsA("TextButton") then c:Destroy() end end table.clear(itemSetFns); table.clear(allItems); table.clear(DropTable); updateText(); refreshCanvas() end
+			function Dropfunc:Get() return DropTable end
+			function Dropfunc:Set(values,silent) table.clear(DropTable); if type(values)=="table" then for _,v in next,values do if table.find(list,v) and not table.find(DropTable,v) then table.insert(DropTable,v) end end end; updateText(); if not silent then callback(DropTable) end end
+			function Dropfunc:Add(Text)
+				local item,ItemLabel,ItemBar,setFn=makeDropItem(Scroll,Text,table.find(DropTable,Text)~=nil)
+				local Check=Instance.new("TextLabel"); Check.Name="Check"; Check.Parent=item; Check.BackgroundTransparency=1; Check.Size=UDim2.new(0,18,1,0); Check.Position=UDim2.new(1,-20,0,0)
+				Check.Font=Enum.Font.GothamBold; Check.Text="✓"; Check.TextSize=11; Check.TextColor3=Accent; Check.TextTransparency=table.find(DropTable,Text) and 0 or 1; Check.ZIndex=18
+				itemSetFns[Text]=setFn
+				table.insert(allItems, {item=item, text=Text})
+				item.MouseButton1Click:Connect(function()
+					local found=table.find(DropTable,Text)
+					if not found then table.insert(DropTable,Text); Tween(Check,{TextTransparency=0},0.18); setFn(true)
+					else table.remove(DropTable,found); Tween(Check,{TextTransparency=1},0.18); setFn(false) end
+					updateText(); callback(DropTable,Text)
+				end); refreshCanvas()
+			end
+			for _,v in next,list do Dropfunc:Add(v) end; updateText(); refreshCanvas()
+			if #DropTable>0 then callback(DropTable) end
+
+			-- Search functionality
+			if search and SearchBox then
+				SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
+					local query = SearchBox.Text:lower()
+					for _, entry in ipairs(allItems) do
+						local match = query == "" or entry.text:lower():find(query, 1, true)
+						entry.item.Visible = match
+					end
+					refreshCanvas()
+				end)
 			end
 
-			function functionitem:MultiDropdownV2(MDName, list, default, callback)
-				local Dropfunc={}; list=list or {}; callback=callback or function() end; local DropTable={}
-				if type(default)=="table" then for _,v in next,default do if table.find(list,v) and not table.find(DropTable,v) then table.insert(DropTable,v) end end end
-				local Frame,HitBtn,DisplayText,Arrow,FStroke=buildDropHeaderV2(SectionContainer)
-				
-				local function updateText()
-					if #DropTable>0 then
-						if #DropTable<=3 then DisplayText.Text=MDName.."  ›  "..table.concat(DropTable,", ")
-						else DisplayText.Text=MDName.."  ›  "..table.concat({DropTable[1],DropTable[2],DropTable[3]},", ").."  +"..(#DropTable-3) end
-						DisplayText.TextColor3=TxtPri;
-					else DisplayText.Text=MDName; DisplayText.TextColor3=TxtMut; end
-					fitText(DisplayText,DisplayText.Text,12,9)
-				end
-				task.defer(function() updateText(); DisplayText:GetPropertyChangedSignal("AbsoluteSize"):Connect(updateText) end)
-				
-				-- Floating dropdown panel - parented to UI for top ZIndex, position tracked to button
-				local Panel=Instance.new("Frame"); Panel.Name="DropPanel"; Panel.Parent=UI
-				Panel.BackgroundColor3=Color3.fromRGB(14,14,16); Panel.BorderSizePixel=0
-				Panel.Position=UDim2.new(0,0,0,0); Panel.Size=UDim2.new(0,200,0,0)
-				Panel.ZIndex=9000; Panel.Visible=false; Panel.ClipsDescendants=true
-				local PCorner=Instance.new("UICorner"); PCorner.CornerRadius=UDim.new(0,10); PCorner.Parent=Panel
-				local PStroke=Instance.new("UIStroke"); PStroke.Color=Color3.fromRGB(40,40,48); PStroke.Thickness=1; PStroke.Parent=Panel
-				
-				local PShimmer=Instance.new("Frame"); PShimmer.Parent=Panel; PShimmer.BackgroundColor3=Color3.fromRGB(255,255,255)
-				PShimmer.BorderSizePixel=0; PShimmer.Position=UDim2.new(0,0,0,0); PShimmer.Size=UDim2.new(1,0,0,1); PShimmer.ZIndex=9001
-				local PShimmerGrad=Instance.new("UIGradient"); PShimmerGrad.Rotation=0; PShimmerGrad.Parent=PShimmer
-				startShimmerAnimation(PShimmerGrad,0.8,0.04,0.35)
-				
-				local Scroll=Instance.new("ScrollingFrame"); Scroll.Name="Scroll_Items"; Scroll.Parent=Panel; Scroll.Active=true
-				Scroll.BackgroundTransparency=1; Scroll.BorderSizePixel=0; Scroll.Position=UDim2.new(0,0,0,6); Scroll.Size=UDim2.new(1,0,1,-12); Scroll.ZIndex=9001
-				Scroll.ScrollBarThickness=2; Scroll.ScrollBarImageColor3=Color3.fromRGB(32,32,38); Scroll.CanvasSize=UDim2.new(0,0,0,0)
-				local SList=Instance.new("UIListLayout"); SList.Parent=Scroll; SList.SortOrder=Enum.SortOrder.LayoutOrder; SList.Padding=UDim.new(0,3)
-				local SPad=Instance.new("UIPadding"); SPad.Parent=Scroll
-				SPad.PaddingLeft=UDim.new(0,6); SPad.PaddingRight=UDim.new(0,6); SPad.PaddingTop=UDim.new(0,6); SPad.PaddingBottom=UDim.new(0,6)
-				
-				local function refreshCanvas() Scroll.CanvasSize=UDim2.new(0,0,0,SList.AbsoluteContentSize.Y+12) end
-				SList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(refreshCanvas)
-				
-				local panelOpen=false
-				local clickConn=nil
-				local posConn=nil
-				
-				local function syncPanelPos()
-					if not panelOpen or not Frame or not Frame.Parent then return end
-					local absPos = Frame.AbsolutePosition
-					local absSize = Frame.AbsoluteSize
-					Panel.Position = UDim2.new(0, absPos.X, 0, absPos.Y + absSize.Y + 4)
-					Panel.Size = UDim2.new(0, absSize.X, 0, Panel.AbsoluteSize.Y)
-				end
-				
-				local function closePanel()
-					if not panelOpen then return end
-					panelOpen=false
-					if posConn then posConn:Disconnect(); posConn=nil end
-					Tween(Panel,{Size=UDim2.new(0,Panel.AbsoluteSize.X,0,0)},0.2,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
-					Tween(Panel,{BackgroundTransparency=1},0.2)
-					Tween(PStroke,{Transparency=1},0.2)
-					Tween(Arrow,{Rotation=0},0.22,Enum.EasingStyle.Quart,Enum.EasingDirection.Out)
-					Tween(Arrow,{ImageColor3=Color3.fromRGB(55,55,65)},0.22)
-					Tween(FStroke,{Color=Color3.fromRGB(40,40,48)},0.22)
-					if clickConn then clickConn:Disconnect(); clickConn=nil end
-					task.delay(0.22,function() if Panel and Panel.Parent then Panel.Visible=false end end)
-				end
-				
-				local function openPanel()
-					if panelOpen then closePanel(); return end
-					panelOpen=true
-					
-					local absPos=Frame.AbsolutePosition
-					local absSize=Frame.AbsoluteSize
-					Panel.Position=UDim2.new(0,absPos.X,0,absPos.Y+absSize.Y+4)
-					Panel.Size=UDim2.new(0,absSize.X,0,0)
-					Panel.BackgroundTransparency=1; PStroke.Transparency=1
-					Panel.Visible=true
-					
-					-- Sync position every frame while open to follow scrolling
-					posConn = RunService.Heartbeat:Connect(syncPanelPos)
-					
-					local contentH=math.clamp(SList.AbsoluteContentSize.Y+18,40,220)
-					Tween(Panel,{Size=UDim2.new(0,absSize.X,0,contentH)},0.25,Enum.EasingStyle.Back,Enum.EasingDirection.Out)
-					Tween(Panel,{BackgroundTransparency=0},0.2)
-					Tween(PStroke,{Transparency=0},0.2)
-					Tween(Arrow,{Rotation=180},0.22,Enum.EasingStyle.Quart,Enum.EasingDirection.Out)
-					Tween(Arrow,{ImageColor3=TxtPri},0.22)
-					Tween(FStroke,{Color=Color3.fromRGB(60,60,70)},0.22)
-					
-					task.delay(0.05,function()
-						clickConn=UserInputService.InputBegan:Connect(function(input,gp)
-							if gp then return end
-							if input.UserInputType~=Enum.UserInputType.MouseButton1 and input.UserInputType~=Enum.UserInputType.Touch then return end
-							local mp=input.Position
-							local pp=Panel.AbsolutePosition; local ps=Panel.AbsoluteSize
-							local fp=Frame.AbsolutePosition; local fs=Frame.AbsoluteSize
-							local inPanel=mp.X>=pp.X and mp.X<=pp.X+ps.X and mp.Y>=pp.Y and mp.Y<=pp.Y+ps.Y
-							local inFrame=mp.X>=fp.X and mp.X<=fp.X+fs.X and mp.Y>=fp.Y and mp.Y<=fp.Y+fs.Y
-							if not inPanel and not inFrame then closePanel() end
-						end)
+			table.insert(FeatureRegistry,{name=tostring(MDName),tabName=Name,sectionName=SectionName,instance=Frame,tabBtn=TabBtn})
+			return Dropfunc
+		end
+
+		function functionitem:DropdownV2(DDName, list, default, callback, search)
+			search = search or false
+			local Dropfunc={}; list=list or {}; callback=callback or function() end
+			local selected=(default and table.find(list,default)) and default or nil
+			local Frame,HitBtn,DisplayText,Arrow,FStroke,SearchBox=buildDropHeaderV2(SectionContainer, search)
+
+			local function updateText()
+				if selected then DisplayText.Text=DDName.."  ›  "..tostring(selected); DisplayText.TextColor3=TxtPri;
+				else DisplayText.Text=DDName; DisplayText.TextColor3=TxtMut; end
+				fitText(DisplayText,DisplayText.Text,12,9)
+			end
+			task.defer(function() updateText(); DisplayText:GetPropertyChangedSignal("AbsoluteSize"):Connect(updateText) end)
+
+			-- Floating dropdown panel - parented to UI for top ZIndex, position tracked to button
+			local Panel=Instance.new("Frame"); Panel.Name="DropPanel"; Panel.Parent=UI
+			Panel.BackgroundColor3=Color3.fromRGB(14,14,16); Panel.BorderSizePixel=0
+			Panel.Position=UDim2.new(0,0,0,0); Panel.Size=UDim2.new(0,200,0,0)
+			Panel.ZIndex=9000; Panel.Visible=false; Panel.ClipsDescendants=true
+			local PCorner=Instance.new("UICorner"); PCorner.CornerRadius=UDim.new(0,10); PCorner.Parent=Panel
+			local PStroke=Instance.new("UIStroke"); PStroke.Color=Color3.fromRGB(40,40,48); PStroke.Thickness=1; PStroke.Parent=Panel
+
+			local PShimmer=Instance.new("Frame"); PShimmer.Parent=Panel; PShimmer.BackgroundColor3=Color3.fromRGB(255,255,255)
+			PShimmer.BorderSizePixel=0; PShimmer.Position=UDim2.new(0,0,0,0); PShimmer.Size=UDim2.new(1,0,0,1); PShimmer.ZIndex=9001
+			local PShimmerGrad=Instance.new("UIGradient"); PShimmerGrad.Rotation=0; PShimmerGrad.Parent=PShimmer
+			startShimmerAnimation(PShimmerGrad,0.8,0.04,0.35)
+
+			-- Search box inside Panel (V2 floating dropdown)
+			local SearchBox
+			if search then
+				local SearchContainer = Instance.new("Frame")
+				SearchContainer.Name = "SearchContainer"
+				SearchContainer.Parent = Panel
+				SearchContainer.BackgroundColor3 = Color3.fromRGB(18,18,18)
+				SearchContainer.BorderSizePixel = 0
+				SearchContainer.Position = UDim2.new(0,6,0,6)
+				SearchContainer.Size = UDim2.new(1,-12,0,26)
+				SearchContainer.ZIndex = 9001
+				local SCCorner = Instance.new("UICorner"); SCCorner.CornerRadius = UDim.new(0,6); SCCorner.Parent = SearchContainer
+				local SCStroke = Instance.new("UIStroke"); SCStroke.Color = Color3.fromRGB(32,32,32); SCStroke.Thickness = 1; SCStroke.Parent = SearchContainer
+
+				local SBIcon = Instance.new("ImageLabel")
+				SBIcon.Name = "SearchIcon"
+				SBIcon.Parent = SearchContainer
+				SBIcon.BackgroundTransparency = 1
+				SBIcon.Position = UDim2.new(0,8,0.5,-6)
+				SBIcon.Size = UDim2.new(0,12,0,12)
+				SBIcon.Image = "rbxassetid://121018724060431"
+				SBIcon.ImageColor3 = Color3.fromRGB(55,55,55)
+				SBIcon.ZIndex = 9002
+
+				SearchBox = Instance.new("TextBox")
+				SearchBox.Name = "SearchBox"
+				SearchBox.Parent = SearchContainer
+				SearchBox.BackgroundTransparency = 1
+				SearchBox.BorderSizePixel = 0
+				SearchBox.Position = UDim2.new(0,26,0,0)
+				SearchBox.Size = UDim2.new(1,-34,1,0)
+				SearchBox.ZIndex = 9002
+				SearchBox.Font = Enum.Font.Gotham
+				SearchBox.PlaceholderText = "Search..."
+				SearchBox.PlaceholderColor3 = Color3.fromRGB(55,55,55)
+				SearchBox.Text = ""
+				SearchBox.TextColor3 = TxtPri
+				SearchBox.TextSize = 10
+				SearchBox.TextXAlignment = Enum.TextXAlignment.Left
+				SearchBox.ClearTextOnFocus = false
+
+				SearchBox.Focused:Connect(function() 
+					Tween(SCStroke,{Color=Color3.fromRGB(55,55,55)},0.14)
+					SBIcon.ImageColor3 = Color3.fromRGB(100,100,100)
+				end)
+				SearchBox.FocusLost:Connect(function() 
+					Tween(SCStroke,{Color=Color3.fromRGB(32,32,32)},0.14)
+					SBIcon.ImageColor3 = Color3.fromRGB(55,55,55)
+				end)
+			end
+
+			local Scroll=Instance.new("ScrollingFrame"); Scroll.Name="Scroll_Items"; Scroll.Parent=Panel; Scroll.Active=true
+			Scroll.BackgroundTransparency=1; Scroll.BorderSizePixel=0; Scroll.Position=UDim2.new(0,0,0,search and 36 or 6); Scroll.Size=UDim2.new(1,0,1,-(search and 42 or 12)); Scroll.ZIndex=9001
+			Scroll.ScrollBarThickness=2; Scroll.ScrollBarImageColor3=Color3.fromRGB(32,32,38); Scroll.CanvasSize=UDim2.new(0,0,0,0)
+			local SList=Instance.new("UIListLayout"); SList.Parent=Scroll; SList.SortOrder=Enum.SortOrder.LayoutOrder; SList.Padding=UDim.new(0,3)
+			local SPad=Instance.new("UIPadding"); SPad.Parent=Scroll
+			SPad.PaddingLeft=UDim.new(0,6); SPad.PaddingRight=UDim.new(0,6); SPad.PaddingTop=UDim.new(0,6); SPad.PaddingBottom=UDim.new(0,6)
+
+			local function refreshCanvas() Scroll.CanvasSize=UDim2.new(0,0,0,SList.AbsoluteContentSize.Y+12) end
+			SList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(refreshCanvas)
+
+			local panelOpen=false
+			local clickConn=nil
+			local posConn=nil
+
+			local function syncPanelPos()
+				if not panelOpen or not Frame or not Frame.Parent then return end
+				local absPos = Frame.AbsolutePosition
+				local absSize = Frame.AbsoluteSize
+				Panel.Position = UDim2.new(0, absPos.X, 0, absPos.Y + absSize.Y + 4)
+				Panel.Size = UDim2.new(0, absSize.X, 0, Panel.AbsoluteSize.Y)
+			end
+
+			local function closePanel()
+				if not panelOpen then return end
+				panelOpen=false
+				if posConn then posConn:Disconnect(); posConn=nil end
+				Tween(Panel,{Size=UDim2.new(0,Panel.AbsoluteSize.X,0,0)},0.2,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+				Tween(Panel,{BackgroundTransparency=1},0.2)
+				Tween(PStroke,{Transparency=1},0.2)
+				Tween(Arrow,{Rotation=0},0.22,Enum.EasingStyle.Quart,Enum.EasingDirection.Out)
+				Tween(Arrow,{ImageColor3=Color3.fromRGB(55,55,65)},0.22)
+				Tween(FStroke,{Color=Color3.fromRGB(40,40,48)},0.22)
+				if clickConn then clickConn:Disconnect(); clickConn=nil end
+				task.delay(0.22,function() if Panel and Panel.Parent then Panel.Visible=false end end)
+			end
+
+			local function openPanel()
+				if panelOpen then closePanel(); return end
+				panelOpen=true
+
+				local absPos=Frame.AbsolutePosition
+				local absSize=Frame.AbsoluteSize
+				Panel.Position=UDim2.new(0,absPos.X,0,absPos.Y+absSize.Y+4)
+				Panel.Size=UDim2.new(0,absSize.X,0,0)
+				Panel.BackgroundTransparency=1; PStroke.Transparency=1
+				Panel.Visible=true
+
+				-- Sync position every frame while open to follow scrolling
+				posConn = RunService.Heartbeat:Connect(syncPanelPos)
+
+				local contentH=math.clamp(SList.AbsoluteContentSize.Y+18,40,220)
+				Tween(Panel,{Size=UDim2.new(0,absSize.X,0,contentH)},0.25,Enum.EasingStyle.Back,Enum.EasingDirection.Out)
+				Tween(Panel,{BackgroundTransparency=0},0.2)
+				Tween(PStroke,{Transparency=0},0.2)
+				Tween(Arrow,{Rotation=180},0.22,Enum.EasingStyle.Quart,Enum.EasingDirection.Out)
+				Tween(Arrow,{ImageColor3=TxtPri},0.22)
+				Tween(FStroke,{Color=Color3.fromRGB(60,60,70)},0.22)
+
+				task.delay(0.05,function()
+					clickConn=UserInputService.InputBegan:Connect(function(input,gp)
+						if gp then return end
+						if input.UserInputType~=Enum.UserInputType.MouseButton1 and input.UserInputType~=Enum.UserInputType.Touch then return end
+						local mp=input.Position
+						local pp=Panel.AbsolutePosition; local ps=Panel.AbsoluteSize
+						local fp=Frame.AbsolutePosition; local fs=Frame.AbsoluteSize
+						local inPanel=mp.X>=pp.X and mp.X<=pp.X+ps.X and mp.Y>=pp.Y and mp.Y<=pp.Y+ps.Y
+						local inFrame=mp.X>=fp.X and mp.X<=fp.X+fs.X and mp.Y>=fp.Y and mp.Y<=fp.Y+fs.Y
+						if not inPanel and not inFrame then closePanel() end
 					end)
-				end
-				
-				HitBtn.MouseButton1Click:Connect(openPanel)
-				
-				function Dropfunc:Clear() for _,c in next,Scroll:GetChildren() do if c:IsA("TextButton") then c:Destroy() end end table.clear(DropTable); updateText(); refreshCanvas() end
-				function Dropfunc:Get() return DropTable end
-				function Dropfunc:Set(values,silent) table.clear(DropTable); if type(values)=="table" then for _,v in next,values do if table.find(list,v) and not table.find(DropTable,v) then table.insert(DropTable,v) end end end; updateText(); if not silent then callback(DropTable) end end
-				function Dropfunc:Add(Text)
-					local item,ItemLabel,setFn=makeDropItemV2Multi(Scroll,Text,table.find(DropTable,Text)~=nil)
-					local Check=Instance.new("TextLabel"); Check.Name="Check"; Check.Parent=item; Check.BackgroundTransparency=1; Check.Size=UDim2.new(0,18,1,0); Check.Position=UDim2.new(1,-22,0,0)
-					Check.Font=Enum.Font.GothamBold; Check.Text="✓"; Check.TextSize=11; Check.TextColor3=Accent; Check.TextTransparency=table.find(DropTable,Text) and 0 or 1; Check.ZIndex=9003
-					item.MouseButton1Click:Connect(function()
-						local found=table.find(DropTable,Text)
-						if not found then table.insert(DropTable,Text); Tween(Check,{TextTransparency=0},0.18); setFn(true)
-						else table.remove(DropTable,found); Tween(Check,{TextTransparency=1},0.18); setFn(false) end
-						updateText(); callback(DropTable,Text)
-					end); refreshCanvas()
-				end
-				for _,v in next,list do Dropfunc:Add(v) end; updateText(); refreshCanvas()
-				if #DropTable>0 then callback(DropTable) end
-				table.insert(FeatureRegistry,{name=tostring(MDName),tabName=Name,sectionName=SectionName,instance=Frame,tabBtn=TabBtn})
-				return Dropfunc
+				end)
 			end
 
-			function functionitem:Slider(text, floor, min, max, de, callback)
+			HitBtn.MouseButton1Click:Connect(openPanel)
+
+			Page:GetPropertyChangedSignal("Visible"):Connect(function()
+				if not Page.Visible and panelOpen then
+					closePanel()
+				end
+			end)
+
+			local itemSetFns={}
+			local allItems = {}
+			function Dropfunc:Clear() 
+				for _,c in next,Scroll:GetChildren() do if c:IsA("TextButton") then c:Destroy() end end 
+				table.clear(itemSetFns); table.clear(allItems); selected=nil; updateText(); refreshCanvas() 
+			end
+			function Dropfunc:Get() return selected end
+			function Dropfunc:Set(value,silent)
+				if table.find(list,value) then selected=value; updateText(); if not silent then callback(value) end
+					for _,fn in pairs(itemSetFns) do fn(false) end; if itemSetFns[value] then itemSetFns[value](true) end end
+			end
+			function Dropfunc:Add(Text)
+				local item,ItemLabel,setFn=makeDropItemV2(Scroll,Text,selected==Text)
+				itemSetFns[Text]=setFn
+				table.insert(allItems, {item=item, text=Text})
+				item.MouseButton1Click:Connect(function() 
+					selected=Text; updateText(); callback(Text); 
+					closePanel(); 
+					for key,fn in pairs(itemSetFns) do fn(key==Text) end 
+				end)
+				refreshCanvas()
+			end
+			for _,v in next,list do Dropfunc:Add(v) end; updateText(); refreshCanvas()
+			if selected then callback(selected) end
+
+			-- Search functionality for floating panel
+			if search and SearchBox then
+				SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
+					local query = SearchBox.Text:lower()
+					for _, entry in ipairs(allItems) do
+						local match = query == "" or entry.text:lower():find(query, 1, true)
+						entry.item.Visible = match
+					end
+					refreshCanvas()
+				end)
+			end
+
+			table.insert(FeatureRegistry,{name=tostring(DDName),tabName=Name,sectionName=SectionName,instance=Frame,tabBtn=TabBtn})
+			return Dropfunc
+		end
+
+		function functionitem:MultiDropdownV2(MDName, list, default, callback, search)
+			search = search or false
+			local Dropfunc={}; list=list or {}; callback=callback or function() end; local DropTable={}
+			if type(default)=="table" then for _,v in next,default do if table.find(list,v) and not table.find(DropTable,v) then table.insert(DropTable,v) end end end
+			local Frame,HitBtn,DisplayText,Arrow,FStroke,SearchBox=buildDropHeaderV2(SectionContainer, search)
+
+			local function updateText()
+				if #DropTable>0 then
+					if #DropTable<=3 then DisplayText.Text=MDName.."  ›  "..table.concat(DropTable,", ")
+					else DisplayText.Text=MDName.."  ›  "..table.concat({DropTable[1],DropTable[2],DropTable[3]},", ").."  +"..(#DropTable-3) end
+					DisplayText.TextColor3=TxtPri;
+				else DisplayText.Text=MDName; DisplayText.TextColor3=TxtMut; end
+				fitText(DisplayText,DisplayText.Text,12,9)
+			end
+			task.defer(function() updateText(); DisplayText:GetPropertyChangedSignal("AbsoluteSize"):Connect(updateText) end)
+
+			-- Floating dropdown panel - parented to UI for top ZIndex, position tracked to button
+			local Panel=Instance.new("Frame"); Panel.Name="DropPanel"; Panel.Parent=UI
+			Panel.BackgroundColor3=Color3.fromRGB(14,14,16); Panel.BorderSizePixel=0
+			Panel.Position=UDim2.new(0,0,0,0); Panel.Size=UDim2.new(0,200,0,0)
+			Panel.ZIndex=9000; Panel.Visible=false; Panel.ClipsDescendants=true
+			local PCorner=Instance.new("UICorner"); PCorner.CornerRadius=UDim.new(0,10); PCorner.Parent=Panel
+			local PStroke=Instance.new("UIStroke"); PStroke.Color=Color3.fromRGB(40,40,48); PStroke.Thickness=1; PStroke.Parent=Panel
+
+			local PShimmer=Instance.new("Frame"); PShimmer.Parent=Panel; PShimmer.BackgroundColor3=Color3.fromRGB(255,255,255)
+			PShimmer.BorderSizePixel=0; PShimmer.Position=UDim2.new(0,0,0,0); PShimmer.Size=UDim2.new(1,0,0,1); PShimmer.ZIndex=9001
+			local PShimmerGrad=Instance.new("UIGradient"); PShimmerGrad.Rotation=0; PShimmerGrad.Parent=PShimmer
+			startShimmerAnimation(PShimmerGrad,0.8,0.04,0.35)
+
+			-- Search box inside Panel (V2 floating dropdown)
+			local SearchBox
+			if search then
+				local SearchContainer = Instance.new("Frame")
+				SearchContainer.Name = "SearchContainer"
+				SearchContainer.Parent = Panel
+				SearchContainer.BackgroundColor3 = Color3.fromRGB(18,18,18)
+				SearchContainer.BorderSizePixel = 0
+				SearchContainer.Position = UDim2.new(0,6,0,6)
+				SearchContainer.Size = UDim2.new(1,-12,0,26)
+				SearchContainer.ZIndex = 9001
+				local SCCorner = Instance.new("UICorner"); SCCorner.CornerRadius = UDim.new(0,6); SCCorner.Parent = SearchContainer
+				local SCStroke = Instance.new("UIStroke"); SCStroke.Color = Color3.fromRGB(32,32,32); SCStroke.Thickness = 1; SCStroke.Parent = SearchContainer
+
+				local SBIcon = Instance.new("ImageLabel")
+				SBIcon.Name = "SearchIcon"
+				SBIcon.Parent = SearchContainer
+				SBIcon.BackgroundTransparency = 1
+				SBIcon.Position = UDim2.new(0,8,0.5,-6)
+				SBIcon.Size = UDim2.new(0,12,0,12)
+				SBIcon.Image = "rbxassetid://121018724060431"
+				SBIcon.ImageColor3 = Color3.fromRGB(55,55,55)
+				SBIcon.ZIndex = 9002
+
+				SearchBox = Instance.new("TextBox")
+				SearchBox.Name = "SearchBox"
+				SearchBox.Parent = SearchContainer
+				SearchBox.BackgroundTransparency = 1
+				SearchBox.BorderSizePixel = 0
+				SearchBox.Position = UDim2.new(0,26,0,0)
+				SearchBox.Size = UDim2.new(1,-34,1,0)
+				SearchBox.ZIndex = 9002
+				SearchBox.Font = Enum.Font.Gotham
+				SearchBox.PlaceholderText = "Search..."
+				SearchBox.PlaceholderColor3 = Color3.fromRGB(55,55,55)
+				SearchBox.Text = ""
+				SearchBox.TextColor3 = TxtPri
+				SearchBox.TextSize = 10
+				SearchBox.TextXAlignment = Enum.TextXAlignment.Left
+				SearchBox.ClearTextOnFocus = false
+
+				SearchBox.Focused:Connect(function() 
+					Tween(SCStroke,{Color=Color3.fromRGB(55,55,55)},0.14)
+					SBIcon.ImageColor3 = Color3.fromRGB(100,100,100)
+				end)
+				SearchBox.FocusLost:Connect(function() 
+					Tween(SCStroke,{Color=Color3.fromRGB(32,32,32)},0.14)
+					SBIcon.ImageColor3 = Color3.fromRGB(55,55,55)
+				end)
+			end
+
+			local Scroll=Instance.new("ScrollingFrame"); Scroll.Name="Scroll_Items"; Scroll.Parent=Panel; Scroll.Active=true
+			Scroll.BackgroundTransparency=1; Scroll.BorderSizePixel=0; Scroll.Position=UDim2.new(0,0,0,search and 36 or 6); Scroll.Size=UDim2.new(1,0,1,-(search and 42 or 12)); Scroll.ZIndex=9001
+			Scroll.ScrollBarThickness=2; Scroll.ScrollBarImageColor3=Color3.fromRGB(32,32,38); Scroll.CanvasSize=UDim2.new(0,0,0,0)
+			local SList=Instance.new("UIListLayout"); SList.Parent=Scroll; SList.SortOrder=Enum.SortOrder.LayoutOrder; SList.Padding=UDim.new(0,3)
+			local SPad=Instance.new("UIPadding"); SPad.Parent=Scroll
+			SPad.PaddingLeft=UDim.new(0,6); SPad.PaddingRight=UDim.new(0,6); SPad.PaddingTop=UDim.new(0,6); SPad.PaddingBottom=UDim.new(0,6)
+
+			local function refreshCanvas() Scroll.CanvasSize=UDim2.new(0,0,0,SList.AbsoluteContentSize.Y+12) end
+			SList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(refreshCanvas)
+
+			local panelOpen=false
+			local clickConn=nil
+			local posConn=nil
+
+			local function syncPanelPos()
+				if not panelOpen or not Frame or not Frame.Parent then return end
+				local absPos = Frame.AbsolutePosition
+				local absSize = Frame.AbsoluteSize
+				Panel.Position = UDim2.new(0, absPos.X, 0, absPos.Y + absSize.Y + 4)
+				Panel.Size = UDim2.new(0, absSize.X, 0, Panel.AbsoluteSize.Y)
+			end
+
+			local function closePanel()
+				if not panelOpen then return end
+				panelOpen=false
+				if posConn then posConn:Disconnect(); posConn=nil end
+				Tween(Panel,{Size=UDim2.new(0,Panel.AbsoluteSize.X,0,0)},0.2,Enum.EasingStyle.Quart,Enum.EasingDirection.In)
+				Tween(Panel,{BackgroundTransparency=1},0.2)
+				Tween(PStroke,{Transparency=1},0.2)
+				Tween(Arrow,{Rotation=0},0.22,Enum.EasingStyle.Quart,Enum.EasingDirection.Out)
+				Tween(Arrow,{ImageColor3=Color3.fromRGB(55,55,65)},0.22)
+				Tween(FStroke,{Color=Color3.fromRGB(40,40,48)},0.22)
+				if clickConn then clickConn:Disconnect(); clickConn=nil end
+				task.delay(0.22,function() if Panel and Panel.Parent then Panel.Visible=false end end)
+			end
+
+			local function openPanel()
+				if panelOpen then closePanel(); return end
+				panelOpen=true
+
+				local absPos=Frame.AbsolutePosition
+				local absSize=Frame.AbsoluteSize
+				Panel.Position=UDim2.new(0,absPos.X,0,absPos.Y+absSize.Y+4)
+				Panel.Size=UDim2.new(0,absSize.X,0,0)
+				Panel.BackgroundTransparency=1; PStroke.Transparency=1
+				Panel.Visible=true
+
+				-- Sync position every frame while open to follow scrolling
+				posConn = RunService.Heartbeat:Connect(syncPanelPos)
+
+				local contentH=math.clamp(SList.AbsoluteContentSize.Y+18,40,220)
+				Tween(Panel,{Size=UDim2.new(0,absSize.X,0,contentH)},0.25,Enum.EasingStyle.Back,Enum.EasingDirection.Out)
+				Tween(Panel,{BackgroundTransparency=0},0.2)
+				Tween(PStroke,{Transparency=0},0.2)
+				Tween(Arrow,{Rotation=180},0.22,Enum.EasingStyle.Quart,Enum.EasingDirection.Out)
+				Tween(Arrow,{ImageColor3=TxtPri},0.22)
+				Tween(FStroke,{Color=Color3.fromRGB(60,60,70)},0.22)
+
+				task.delay(0.05,function()
+					clickConn=UserInputService.InputBegan:Connect(function(input,gp)
+						if gp then return end
+						if input.UserInputType~=Enum.UserInputType.MouseButton1 and input.UserInputType~=Enum.UserInputType.Touch then return end
+						local mp=input.Position
+						local pp=Panel.AbsolutePosition; local ps=Panel.AbsoluteSize
+						local fp=Frame.AbsolutePosition; local fs=Frame.AbsoluteSize
+						local inPanel=mp.X>=pp.X and mp.X<=pp.X+ps.X and mp.Y>=pp.Y and mp.Y<=pp.Y+ps.Y
+						local inFrame=mp.X>=fp.X and mp.X<=fp.X+fs.X and mp.Y>=fp.Y and mp.Y<=fp.Y+fs.Y
+						if not inPanel and not inFrame then closePanel() end
+					end)
+				end)
+			end
+
+			HitBtn.MouseButton1Click:Connect(openPanel)
+
+			-- Close panel when switching tabs
+			Page:GetPropertyChangedSignal("Visible"):Connect(function()
+				if not Page.Visible and panelOpen then
+					closePanel()
+				end
+			end)
+
+			local itemSetFns={}
+			local allItems = {}
+			function Dropfunc:Clear() for _,c in next,Scroll:GetChildren() do if c:IsA("TextButton") then c:Destroy() end end table.clear(itemSetFns); table.clear(allItems); table.clear(DropTable); updateText(); refreshCanvas() end
+			function Dropfunc:Get() return DropTable end
+			function Dropfunc:Set(values,silent) table.clear(DropTable); if type(values)=="table" then for _,v in next,values do if table.find(list,v) and not table.find(DropTable,v) then table.insert(DropTable,v) end end end; updateText(); if not silent then callback(DropTable) end end
+			function Dropfunc:Add(Text)
+				local item,ItemLabel,setFn=makeDropItemV2Multi(Scroll,Text,table.find(DropTable,Text)~=nil)
+				local Check=Instance.new("TextLabel"); Check.Name="Check"; Check.Parent=item; Check.BackgroundTransparency=1; Check.Size=UDim2.new(0,18,1,0); Check.Position=UDim2.new(1,-22,0,0)
+				Check.Font=Enum.Font.GothamBold; Check.Text="✓"; Check.TextSize=11; Check.TextColor3=Accent; Check.TextTransparency=table.find(DropTable,Text) and 0 or 1; Check.ZIndex=9003
+				itemSetFns[Text]=setFn
+				table.insert(allItems, {item=item, text=Text})
+				item.MouseButton1Click:Connect(function()
+					local found=table.find(DropTable,Text)
+					if not found then table.insert(DropTable,Text); Tween(Check,{TextTransparency=0},0.18); setFn(true)
+					else table.remove(DropTable,found); Tween(Check,{TextTransparency=1},0.18); setFn(false) end
+					updateText(); callback(DropTable,Text)
+				end); refreshCanvas()
+			end
+			for _,v in next,list do Dropfunc:Add(v) end; updateText(); refreshCanvas()
+			if #DropTable>0 then callback(DropTable) end
+
+			-- Search functionality for floating panel
+			if search and SearchBox then
+				SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
+					local query = SearchBox.Text:lower()
+					for _, entry in ipairs(allItems) do
+						local match = query == "" or entry.text:lower():find(query, 1, true)
+						entry.item.Visible = match
+					end
+					refreshCanvas()
+				end)
+			end
+
+			table.insert(FeatureRegistry,{name=tostring(MDName),tabName=Name,sectionName=SectionName,instance=Frame,tabBtn=TabBtn})
+			return Dropfunc
+		end
+		function functionitem:Slider(text, floor, min, max, de, callback)
 				local sliderfunc={}; floor=floor or false; min=min or 0; max=max or 100; de=de or min; callback=callback or function() end
 				local SliderFrame=Instance.new("Frame"); SliderFrame.Name="SliderFrame"; SliderFrame.Parent=SectionContainer
 				SliderFrame.BackgroundColor3=Color3.fromRGB(18,18,18); SliderFrame.BackgroundTransparency=0; SliderFrame.BorderSizePixel=0; SliderFrame.Size=UDim2.new(1,0,0,52)
