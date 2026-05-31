@@ -283,9 +283,18 @@ function library:NaJa(config)
 		IntroOverlay.Visible = false
 	end)
 
+-- Create separate ScreenGui for notifications so they persist when main UI is toggled
+local NotifUI = Instance.new("ScreenGui")
+NotifUI.Name = "NaJaNotifs"
+NotifUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+NotifUI.ResetOnSpawn = false
+NotifUI.DisplayOrder = 10000
+pcall(function() NotifUI.Parent = game:GetService("CoreGui") end)
+if not NotifUI.Parent then NotifUI.Parent = LocalPlayer.PlayerGui end
+
 local NotifContainer = Instance.new("Frame")
 NotifContainer.Name = "NotifContainer"
-NotifContainer.Parent = UI
+NotifContainer.Parent = NotifUI
 NotifContainer.BackgroundTransparency = 1
 NotifContainer.AnchorPoint = Vector2.new(1, 1)
 NotifContainer.Position = UDim2.new(1, -18, 1, -18)
@@ -313,14 +322,19 @@ local function playSound(soundId)
 	end
 
 	pcall(function()
-		local snd = Instance.new("Sound")
-		snd.SoundId = "rbxassetid://" .. tostring(soundId)
-		snd.Volume = 0.4
-		snd.Parent = SoundService
-		snd:Play()
-		game:GetService("Debris"):AddItem(snd, 6)
+		if game:GetService("CoreGui"):FindFirstChild("NaJaUI") then
+			game:GetService("CoreGui"):FindFirstChild("NaJaUI"):Destroy()
+		end
+		if LocalPlayer.PlayerGui:FindFirstChild("NaJaUI") then
+			LocalPlayer.PlayerGui:FindFirstChild("NaJaUI"):Destroy()
+		end
+		if game:GetService("CoreGui"):FindFirstChild("NaJaNotifs") then
+			game:GetService("CoreGui"):FindFirstChild("NaJaNotifs"):Destroy()
+		end
+		if LocalPlayer.PlayerGui:FindFirstChild("NaJaNotifs") then
+			LocalPlayer.PlayerGui:FindFirstChild("NaJaNotifs"):Destroy()
+		end
 	end)
-end
 
 local function showNotification(title, message, duration, soundId)
 	if not Settings.notifEnabled then return end
