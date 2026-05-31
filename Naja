@@ -1824,14 +1824,12 @@ UserInputService.InputBegan:Connect(function(io, p)
     if p then return end
     if io.KeyCode == UIConfig.Bind and not Settings.keybindListening then
         if not uitoggled then
-            -- Hide Main UI only, keep UI enabled so notifications stay visible
             Tween(Main,{Size=UDim2.new(0,0,0,0),BackgroundTransparency=1},0.3)
             uitoggled = true
             task.wait(0.32)
-            Main.Visible = false  -- <-- CHANGED: use Visible instead of UI.Enabled
+            Main.Visible = false
         else
-            -- Show Main UI again
-            Main.Visible = true   -- <-- CHANGED: use Visible instead of UI.Enabled
+            Main.Visible = true
             Main.Size = UDim2.new(0,0,0,0)
             Main.BackgroundTransparency = 1
             applyUISize(_G.UISize)
