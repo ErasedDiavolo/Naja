@@ -2410,7 +2410,7 @@ end)
 			return cardFunc
 		end
 
-		function sections:Section(SectionName, side)
+		function sections:Section(SectionName, side, icon)
 			local parent=GetType(side)
 
 			local Section=Instance.new("Frame"); Section.Name=SectionName.."Section"; Section.Parent=parent
@@ -2449,11 +2449,32 @@ end)
 			SecShimmer.BorderSizePixel=0; SecShimmer.Position=UDim2.new(0,0,0,0); SecShimmer.Size=UDim2.new(1,0,0,1); SecShimmer.ZIndex=2
 			SecShimmerGrad.Parent=SecShimmer; startShimmerAnimation(SecShimmerGrad,0.6,0.03,0.32)
 
-			local SectionTop=Instance.new("Frame"); SectionTop.Name="Top"; SectionTop.Parent=Section; SectionTop.BackgroundTransparency=1; SectionTop.Size=UDim2.new(1,0,0,32)
-			local SectionTitle=Instance.new("TextLabel"); SectionTitle.Name="Sectionname"; SectionTitle.Parent=SectionTop; SectionTitle.BackgroundTransparency=1
-			SectionTitle.Position=UDim2.new(0,14,0,0); SectionTitle.Size=UDim2.new(1,-28,1,0)
-			SectionTitle.Font=Enum.Font.GothamBold; SectionTitle.Text=string.upper(SectionName)
-			SectionTitle.TextColor3=Color3.fromRGB(55,55,55); SectionTitle.TextSize=9; SectionTitle.TextXAlignment=Enum.TextXAlignment.Left
+            local SectionTop=Instance.new("Frame"); SectionTop.Name="Top"; SectionTop.Parent=Section; SectionTop.BackgroundTransparency=1; SectionTop.Size=UDim2.new(1,0,0,32)
+            
+            local SectionIcon = Instance.new("ImageLabel")
+            SectionIcon.Name = "SectionIcon"
+            SectionIcon.Parent = SectionTop
+            SectionIcon.BackgroundTransparency = 1
+            SectionIcon.Position = UDim2.new(0, 14, 0.5, -6)
+            SectionIcon.Size = UDim2.new(0, 12, 0, 12)
+            SectionIcon.Image = ""
+            SectionIcon.ImageColor3 = Color3.fromRGB(55, 55, 55)
+            SectionIcon.ZIndex = 2
+            
+            local SectionTitle=Instance.new("TextLabel"); SectionTitle.Name="Sectionname"; SectionTitle.Parent=SectionTop; SectionTitle.BackgroundTransparency=1
+            SectionTitle.Position=UDim2.new(0,32,0,0); SectionTitle.Size=UDim2.new(1,-42,1,0)
+            SectionTitle.Font=Enum.Font.GothamBold; SectionTitle.Text=string.upper(SectionName)
+            SectionTitle.TextColor3=Color3.fromRGB(55,55,55); SectionTitle.TextSize=9; SectionTitle.TextXAlignment=Enum.TextXAlignment.Left
+
+            if icon and icon ~= "" then
+            SectionIcon.Image = (_G.NaJaIcons[tostring(icon):lower():gsub("%s+","-")] or (tonumber(icon) and "http://www.roblox.com/asset/?id="..tostring(icon) or tostring(icon)))
+            SectionTitle.Position = UDim2.new(0, 32, 0, 0)
+            SectionTitle.Size = UDim2.new(1, -42, 1, 0)
+        else
+            SectionIcon.Visible = false
+            SectionTitle.Position = UDim2.new(0, 14, 0, 0)
+            SectionTitle.Size = UDim2.new(1, -28, 1, 0)
+        end
 
 			local SectionLine=Instance.new("Frame"); SectionLine.Name="Line"; SectionLine.Parent=SectionTop
 			SectionLine.BackgroundColor3=Color3.fromRGB(255,255,255); SectionLine.BorderSizePixel=0
