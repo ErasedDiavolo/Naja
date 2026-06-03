@@ -322,7 +322,7 @@ local function playSound(soundId)
 	end)
 end
 
-local function showNotification(title, message, duration, soundId, buttonConfig)
+local function showNotification(title, message, duration, soundId)
 	if not Settings.notifEnabled then return end
 
 	notifCount = notifCount + 1
@@ -331,7 +331,6 @@ local function showNotification(title, message, duration, soundId, buttonConfig)
 	local notifTime = duration or 4
 	local safeTitle = tostring(title or "Notification")
 	local safeMessage = tostring(message or "")
-	local hasButton = buttonConfig and buttonConfig.Text and buttonConfig.Text ~= ""
 
 	local Notif = Instance.new("Frame")
 	Notif.Name = "Notif_" .. notifCount
@@ -500,63 +499,6 @@ local function showNotification(title, message, duration, soundId, buttonConfig)
 	NMsg.TextYAlignment = Enum.TextYAlignment.Top
 	NMsg.RichText = false
 	NMsg.ZIndex = 10002
-
-	-- BUTTON (NEW)
-	local ButtonRow
-	if hasButton then
-		ButtonRow = Instance.new("Frame")
-		ButtonRow.Name = "ButtonRow"
-		ButtonRow.Parent = Content
-		ButtonRow.BackgroundTransparency = 1
-		ButtonRow.BorderSizePixel = 0
-		ButtonRow.Size = UDim2.new(1, 0, 0, 28)
-		ButtonRow.ZIndex = 10002
-		ButtonRow.LayoutOrder = 3
-
-		local ActionBtn = Instance.new("TextButton")
-		ActionBtn.Name = "ActionBtn"
-		ActionBtn.Parent = ButtonRow
-		ActionBtn.BackgroundColor3 = buttonConfig.Color or Color3.fromRGB(35, 180, 80)
-		ActionBtn.BorderSizePixel = 0
-		ActionBtn.Size = UDim2.new(0, 0, 0, 26)
-		ActionBtn.AutomaticSize = Enum.AutomaticSize.X
-		ActionBtn.Font = Enum.Font.GothamBold
-		ActionBtn.Text = "  " .. buttonConfig.Text .. "  "
-		ActionBtn.TextColor3 = buttonConfig.TextColor or Color3.fromRGB(255, 255, 255)
-		ActionBtn.TextSize = 11
-		ActionBtn.ZIndex = 10003
-		ActionBtn.AutoButtonColor = false
-
-		local BtnCorner = Instance.new("UICorner")
-		BtnCorner.CornerRadius = UDim.new(0, 6)
-		BtnCorner.Parent = ActionBtn
-
-		local BtnStroke = Instance.new("UIStroke")
-		BtnStroke.Color = buttonConfig.StrokeColor or Color3.fromRGB(45, 200, 95)
-		BtnStroke.Thickness = 1
-		BtnStroke.Parent = ActionBtn
-
-		ActionBtn.MouseEnter:Connect(function()
-			Tween(ActionBtn, {BackgroundColor3 = buttonConfig.HoverColor or Color3.fromRGB(45, 200, 95)}, 0.14)
-			Tween(BtnStroke, {Color = buttonConfig.HoverStrokeColor or Color3.fromRGB(65, 220, 115)}, 0.14)
-		end)
-		ActionBtn.MouseLeave:Connect(function()
-			Tween(ActionBtn, {BackgroundColor3 = buttonConfig.Color or Color3.fromRGB(35, 180, 80)}, 0.14)
-			Tween(BtnStroke, {Color = buttonConfig.StrokeColor or Color3.fromRGB(45, 200, 95)}, 0.14)
-		end)
-		ActionBtn.MouseButton1Click:Connect(function()
-			if buttonConfig.Callback then
-				buttonConfig.Callback()
-			end
-			-- Auto-dismiss on button click
-			if not buttonConfig.KeepOpen then
-				Tween(Notif, {Position = StartPos, BackgroundTransparency = 1}, 0.28, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
-				Tween(Scale, {Scale = 0.9}, 0.22, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
-				task.wait(0.3)
-				pcall(function() Notif:Destroy() end)
-			end
-		end)
-	end
 
 	local EntryPos = UDim2.new(0, 0, 0, 0)
 	local StartPos = UDim2.new(1, 34, 0, 0)
@@ -2523,6 +2465,7 @@ end)
             SectionTitle.Position=UDim2.new(0,32,0,0); SectionTitle.Size=UDim2.new(1,-42,1,0)
             SectionTitle.Font=Enum.Font.GothamBold; SectionTitle.Text=string.upper(SectionName)
             SectionTitle.TextColor3=Color3.fromRGB(55,55,55); SectionTitle.TextSize=9; SectionTitle.TextXAlignment=Enum.TextXAlignment.Left
+            SectionTitle.ClipsDescendants=true; SectionTitle.TextTruncate=Enum.TextTruncate.AtEnd
 
             if icon and icon ~= "" then
             SectionIcon.Image = (_G.NaJaIcons[tostring(icon):lower():gsub("%s+","-")] or (tonumber(icon) and "http://www.roblox.com/asset/?id="..tostring(icon) or tostring(icon)))
@@ -3621,15 +3564,17 @@ end
 				grad(IFBar,ColorSequence.new({ColorSequenceKeypoint.new(0,Color3.fromRGB(200,200,200)),ColorSequenceKeypoint.new(1,Color3.fromRGB(60,60,60))}),90)
 
 				local IFLbl=Instance.new("TextLabel"); IFLbl.Parent=InputFrame; IFLbl.BackgroundTransparency=1
-				IFLbl.Position=UDim2.new(0,12,0,0); IFLbl.Size=UDim2.new(0.45,0,1,0)
-				IFLbl.Font=Enum.Font.Gotham; IFLbl.Text=tostring(TBName); IFLbl.TextColor3=TxtMut
-				IFLbl.TextSize=11; IFLbl.TextXAlignment=Enum.TextXAlignment.Left
+                IFLbl.Position=UDim2.new(0,12,0,0); IFLbl.Size=UDim2.new(0.45,0,1,0)
+                IFLbl.Font=Enum.Font.Gotham; IFLbl.Text=tostring(TBName); IFLbl.TextColor3=TxtMut
+                IFLbl.TextSize=11; IFLbl.TextXAlignment=Enum.TextXAlignment.Left
+                IFLbl.ClipsDescendants=true; IFLbl.TextTruncate=Enum.TextTruncate.AtEnd
 
-				local IFInput=Instance.new("TextBox"); IFInput.Parent=InputFrame; IFInput.BackgroundColor3=Color3.fromRGB(10,10,10)
-				IFInput.BorderSizePixel=0; IFInput.Position=UDim2.new(0.48,0,0.12,0); IFInput.Size=UDim2.new(0.52,-10,0.76,0)
-				IFInput.Font=Enum.Font.Gotham; IFInput.PlaceholderColor3=Color3.fromRGB(38,38,38)
-				IFInput.PlaceholderText=Placeholder or "..."; IFInput.Text=""
-				IFInput.TextColor3=TxtPri; IFInput.TextSize=11; IFInput.ZIndex=2
+                local IFInput=Instance.new("TextBox"); IFInput.Parent=InputFrame; IFInput.BackgroundColor3=Color3.fromRGB(10,10,10)
+                IFInput.BorderSizePixel=0; IFInput.Position=UDim2.new(0.48,0,0.12,0); IFInput.Size=UDim2.new(0.52,-14,0.76,0)
+                IFInput.Font=Enum.Font.Gotham; IFInput.PlaceholderColor3=Color3.fromRGB(38,38,38)
+                IFInput.PlaceholderText=Placeholder or "..."; IFInput.Text=""
+                IFInput.TextColor3=TxtPri; IFInput.TextSize=11; IFInput.ZIndex=2
+                IFInput.ClipsDescendants=true; IFInput.TextTruncate=Enum.TextTruncate.AtEnd
 				local IFInputC=Instance.new("UICorner"); IFInputC.CornerRadius=UDim.new(0,4); IFInputC.Parent=IFInput
 				local IFInputS=Instance.new("UIStroke"); IFInputS.Color=Color3.fromRGB(24,24,24); IFInputS.Thickness=1; IFInputS.Parent=IFInput
 
@@ -3664,12 +3609,13 @@ end
 				local InputBgCorner=Instance.new("UICorner"); InputBgCorner.CornerRadius=UDim.new(0,5); InputBgCorner.Parent=InputBg
 				local InputBgStroke=Instance.new("UIStroke"); InputBgStroke.Color=Color3.fromRGB(22,22,22); InputBgStroke.Thickness=1; InputBgStroke.Parent=InputBg
 
-				local InputBox=Instance.new("TextBox"); InputBox.Name="LargeInput"; InputBox.Parent=InputBg; InputBox.BackgroundTransparency=1
-				InputBox.Size=UDim2.new(1,-12,1,0); InputBox.Position=UDim2.new(0,7,0,0)
-				InputBox.Font=Enum.Font.Gotham; InputBox.PlaceholderColor3=Color3.fromRGB(36,36,36)
-				InputBox.PlaceholderText=Placeholder or "Enter text..."; InputBox.Text=""; InputBox.MultiLine=true
-				InputBox.TextColor3=TxtPri; InputBox.TextSize=11; InputBox.TextXAlignment=Enum.TextXAlignment.Left
-				InputBox.TextYAlignment=Enum.TextYAlignment.Top; InputBox.ClearTextOnFocus=false
+local InputBox=Instance.new("TextBox"); InputBox.Name="LargeInput"; InputBox.Parent=InputBg; InputBox.BackgroundTransparency=1
+InputBox.Size=UDim2.new(1,-14,1,-6); InputBox.Position=UDim2.new(0,7,0,3)
+InputBox.Font=Enum.Font.Gotham; InputBox.PlaceholderColor3=Color3.fromRGB(36,36,36)
+InputBox.PlaceholderText=Placeholder or "Enter text..."; InputBox.Text=""
+InputBox.TextColor3=TxtPri; InputBox.TextSize=11; InputBox.TextXAlignment=Enum.TextXAlignment.Left
+InputBox.TextYAlignment=Enum.TextYAlignment.Top; InputBox.ClearTextOnFocus=false
+InputBox.TextWrapped=true; InputBox.ClipsDescendants=true
 				InputBox.Focused:Connect(function() Tween(IFStroke,{Color=Color3.fromRGB(68,68,68)},0.18); Tween(InputBgStroke,{Color=Color3.fromRGB(50,50,50)},0.18); Tween(IFBar,{Size=UDim2.new(0,3,0.8,0)},0.14) end)
 				InputBox.FocusLost:Connect(function(enter)
 					Tween(IFStroke,{Color=Border},0.18); Tween(InputBgStroke,{Color=Color3.fromRGB(22,22,22)},0.18); Tween(IFBar,{Size=UDim2.new(0,2,0.8,0)},0.14)
@@ -3692,11 +3638,12 @@ end
 				InputBg.Position=UDim2.new(0,10,0,22); InputBg.Size=UDim2.new(1,-20,0,22)
 				local InputBgCorner=Instance.new("UICorner"); InputBgCorner.CornerRadius=UDim.new(0,5); InputBgCorner.Parent=InputBg
 				local InputBgStroke=Instance.new("UIStroke"); InputBgStroke.Color=Color3.fromRGB(22,22,22); InputBgStroke.Thickness=1; InputBgStroke.Parent=InputBg
-				local InputBox=Instance.new("TextBox"); InputBox.Name="HeadTitle"; InputBox.Parent=InputBg; InputBox.BackgroundTransparency=1
-				InputBox.Size=UDim2.new(1,-10,1,0); InputBox.Position=UDim2.new(0,7,0,0)
-				InputBox.Font=Enum.Font.Gotham; InputBox.PlaceholderColor3=Color3.fromRGB(36,36,36)
-				InputBox.PlaceholderText=Placeholder or "Enter value..."; InputBox.Text=""
-				InputBox.TextColor3=TxtPri; InputBox.TextSize=11; InputBox.TextXAlignment=Enum.TextXAlignment.Left
+                local InputBox=Instance.new("TextBox"); InputBox.Name="HeadTitle"; InputBox.Parent=InputBg; InputBox.BackgroundTransparency=1
+                InputBox.Size=UDim2.new(1,-14,1,0); InputBox.Position=UDim2.new(0,7,0,0)
+                InputBox.Font=Enum.Font.Gotham; InputBox.PlaceholderColor3=Color3.fromRGB(36,36,36)
+                InputBox.PlaceholderText=Placeholder or "Enter value..."; InputBox.Text=""
+                InputBox.TextColor3=TxtPri; InputBox.TextSize=11; InputBox.TextXAlignment=Enum.TextXAlignment.Left
+                InputBox.ClipsDescendants=true; InputBox.TextTruncate=Enum.TextTruncate.AtEnd
 				InputBox.Focused:Connect(function() Tween(TBStroke,{Color=Color3.fromRGB(68,68,68)},0.18); Tween(InputBgStroke,{Color=Color3.fromRGB(50,50,50)},0.18) end)
 				InputBox.FocusLost:Connect(function(enterPressed)
 					Tween(TBStroke,{Color=Border},0.18); Tween(InputBgStroke,{Color=Color3.fromRGB(22,22,22)},0.18)
@@ -4520,9 +4467,9 @@ end
 		return sections
 	end
 
-function tabs:Notify(title, message, duration, soundId, buttonConfig)
-	showNotification(title, message, duration, soundId, buttonConfig)
-end
+	function tabs:Notify(title, message, duration, soundId)
+		showNotification(title, message, duration, soundId)
+	end
 
 	return tabs
 end
