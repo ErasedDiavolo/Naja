@@ -322,7 +322,7 @@ local function playSound(soundId)
 	end)
 end
 
-local function showNotification(title, message, duration, soundId)
+local function showNotification(title, message, duration, soundId, buttonConfig)
 	if not Settings.notifEnabled then return end
 
 	notifCount = notifCount + 1
@@ -331,6 +331,7 @@ local function showNotification(title, message, duration, soundId)
 	local notifTime = duration or 4
 	local safeTitle = tostring(title or "Notification")
 	local safeMessage = tostring(message or "")
+	local hasButton = buttonConfig and buttonConfig.Text and buttonConfig.Text ~= ""
 
 	local Notif = Instance.new("Frame")
 	Notif.Name = "Notif_" .. notifCount
@@ -499,6 +500,63 @@ local function showNotification(title, message, duration, soundId)
 	NMsg.TextYAlignment = Enum.TextYAlignment.Top
 	NMsg.RichText = false
 	NMsg.ZIndex = 10002
+
+	-- BUTTON (NEW)
+	local ButtonRow
+	if hasButton then
+		ButtonRow = Instance.new("Frame")
+		ButtonRow.Name = "ButtonRow"
+		ButtonRow.Parent = Content
+		ButtonRow.BackgroundTransparency = 1
+		ButtonRow.BorderSizePixel = 0
+		ButtonRow.Size = UDim2.new(1, 0, 0, 28)
+		ButtonRow.ZIndex = 10002
+		ButtonRow.LayoutOrder = 3
+
+		local ActionBtn = Instance.new("TextButton")
+		ActionBtn.Name = "ActionBtn"
+		ActionBtn.Parent = ButtonRow
+		ActionBtn.BackgroundColor3 = buttonConfig.Color or Color3.fromRGB(35, 180, 80)
+		ActionBtn.BorderSizePixel = 0
+		ActionBtn.Size = UDim2.new(0, 0, 0, 26)
+		ActionBtn.AutomaticSize = Enum.AutomaticSize.X
+		ActionBtn.Font = Enum.Font.GothamBold
+		ActionBtn.Text = "  " .. buttonConfig.Text .. "  "
+		ActionBtn.TextColor3 = buttonConfig.TextColor or Color3.fromRGB(255, 255, 255)
+		ActionBtn.TextSize = 11
+		ActionBtn.ZIndex = 10003
+		ActionBtn.AutoButtonColor = false
+
+		local BtnCorner = Instance.new("UICorner")
+		BtnCorner.CornerRadius = UDim.new(0, 6)
+		BtnCorner.Parent = ActionBtn
+
+		local BtnStroke = Instance.new("UIStroke")
+		BtnStroke.Color = buttonConfig.StrokeColor or Color3.fromRGB(45, 200, 95)
+		BtnStroke.Thickness = 1
+		BtnStroke.Parent = ActionBtn
+
+		ActionBtn.MouseEnter:Connect(function()
+			Tween(ActionBtn, {BackgroundColor3 = buttonConfig.HoverColor or Color3.fromRGB(45, 200, 95)}, 0.14)
+			Tween(BtnStroke, {Color = buttonConfig.HoverStrokeColor or Color3.fromRGB(65, 220, 115)}, 0.14)
+		end)
+		ActionBtn.MouseLeave:Connect(function()
+			Tween(ActionBtn, {BackgroundColor3 = buttonConfig.Color or Color3.fromRGB(35, 180, 80)}, 0.14)
+			Tween(BtnStroke, {Color = buttonConfig.StrokeColor or Color3.fromRGB(45, 200, 95)}, 0.14)
+		end)
+		ActionBtn.MouseButton1Click:Connect(function()
+			if buttonConfig.Callback then
+				buttonConfig.Callback()
+			end
+			-- Auto-dismiss on button click
+			if not buttonConfig.KeepOpen then
+				Tween(Notif, {Position = StartPos, BackgroundTransparency = 1}, 0.28, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
+				Tween(Scale, {Scale = 0.9}, 0.22, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
+				task.wait(0.3)
+				pcall(function() Notif:Destroy() end)
+			end
+		end)
+	end
 
 	local EntryPos = UDim2.new(0, 0, 0, 0)
 	local StartPos = UDim2.new(1, 34, 0, 0)
@@ -4462,9 +4520,9 @@ end
 		return sections
 	end
 
-	function tabs:Notify(title, message, duration, soundId)
-		showNotification(title, message, duration, soundId)
-	end
+function tabs:Notify(title, message, duration, soundId, buttonConfig)
+	showNotification(title, message, duration, soundId, buttonConfig)
+end
 
 	return tabs
 end
