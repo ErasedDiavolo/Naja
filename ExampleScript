@@ -22,7 +22,7 @@ local ReadmeText = table.concat({
     "## Loading the Library",
     "Place this at the very top of your script:",
     "```lua",
-    "local Library = loadstring(game:HttpGet(\"https://raw.githubusercontent.com/ErasedDiavolo/Test/refs/heads/main/stream\"))()",
+    "local Library = loadstring(game:HttpGet(\"https://raw.githubusercontent.com/ErasedDiavolo/Naja/refs/heads/main/Nja\"))()",
     "```",
     "",
     "## Creating a Window",
