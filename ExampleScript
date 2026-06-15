@@ -374,7 +374,7 @@ local ReadmeText = table.concat({
     "",
     "## Full Working Example",
     "```lua",
-    "local Library = loadstring(game:HttpGet(\"https://raw.githubusercontent.com/ErasedDiavolo/Test/refs/heads/main/stream\"))()",
+    "local Library = loadstring(game:HttpGet(\"https://raw.githubusercontent.com/ErasedDiavolo/Naja/refs/heads/main/Nja\"))()",
     "",
     "local Window = Library:NaJa({",
     "    Title = \"My Script\",",
